@@ -1,10 +1,10 @@
 package com.larkmt.cn.admin.controller;
 
 import cn.hutool.core.util.StrUtil;
-import com.larkmt.core.biz.model.ReturnT;
-import com.larkmt.cn.admin.mapper.JobUserMapper;
 import com.larkmt.cn.admin.core.util.I18nUtil;
 import com.larkmt.cn.admin.entity.JobUser;
+import com.larkmt.cn.admin.mapper.JobUserMapper;
+import com.larkmt.core.biz.model.ReturnT;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,13 +19,12 @@ import java.util.Map;
 import static com.larkmt.core.biz.model.ReturnT.FAIL_CODE;
 
 /**
- *
  * @Author: LarkMidTable
  * @Date: 2020/9/16 11:14
- * @Description:  用户管理模块
+ * @Description: 用户管理模块
  **/
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/larkmidtable/api/user")
 @Api(tags = "用户信息接口")
 public class UserController {
 

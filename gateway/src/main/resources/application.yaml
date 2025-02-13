@@ -8,8 +8,8 @@ spring:
       server-addr: localhost:8848 # nacos地址
     gateway:
       routes: # 网关路由配置
-        - id: larkmt-admin # 路由id，自定义，只要唯一即可
-          uri: lb://larkmt-admin # 路由的目标地址 lb就是负载均衡，后面跟服务名称
+        - id: larkmidtable # 路由id，自定义，只要唯一即可
+          uri: lb://larkmidtable # 路由的目标地址 lb就是负载均衡，后面跟服务名称
           predicates: # 路由断言，也就是判断请求是否符合路由规则的条件
             - Path=/larkmidtable/** # 这个是按照路径匹配
         - id: supersonic

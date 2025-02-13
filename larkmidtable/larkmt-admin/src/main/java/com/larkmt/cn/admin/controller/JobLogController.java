@@ -1,16 +1,14 @@
 package com.larkmt.cn.admin.controller;
 
+import com.larkmt.cn.admin.core.kill.KillJob;
+import com.larkmt.cn.admin.core.util.I18nUtil;
+import com.larkmt.cn.admin.entity.JobInfo;
 import com.larkmt.cn.admin.entity.JobLog;
 import com.larkmt.cn.admin.mapper.JobInfoMapper;
 import com.larkmt.cn.admin.mapper.JobLogMapper;
-import com.larkmt.core.biz.ExecutorBiz;
 import com.larkmt.core.biz.model.LogResult;
 import com.larkmt.core.biz.model.ReturnT;
 import com.larkmt.core.util.DateUtil;
-import com.larkmt.cn.admin.core.kill.KillJob;
-import com.larkmt.cn.admin.core.scheduler.JobScheduler;
-import com.larkmt.cn.admin.core.util.I18nUtil;
-import com.larkmt.cn.admin.entity.JobInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -28,16 +26,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @Author: LarkMidTable
  * @Date: 2020/9/16 11:14
  * @Description: 任务运行日志接口
  **/
 @RestController
-@RequestMapping("/api/log")
+@RequestMapping("/larkmidtable/api/log")
 @Api(tags = "任务运行日志接口")
 public class JobLogController {
-    private static Logger logger = LoggerFactory.getLogger(JobLogController.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobLogController.class);
 
     @Resource
     public JobInfoMapper jobInfoMapper;
@@ -79,35 +76,35 @@ public class JobLogController {
     }
 
 
-	@RequestMapping(value = "/logDetailCat", method = RequestMethod.GET)
-	@ApiOperation("运行日志详情")
-	public ReturnT<LogResult> logDetailCat(HttpServletRequest request,String executorAddress) {
-		//添加日志审计功能
-		try {
-			InputStream in = new FileInputStream(executorAddress);
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) != -1) {
-				bos.write(buf, 0, len);
-			}
-			String logContent = new String(bos.toByteArray());
-			if (bos != null) {
-				bos.close();
-			}
-			if (in != null) {
-				in.close();
-			}
-			//@TODO 查看日志
-			ReturnT<LogResult> returnT = new ReturnT<>(ReturnT.SUCCESS_CODE, "查询日志成功");
-			LogResult logResult = new LogResult(0, 0, logContent, true);
-			returnT.setContent(logResult);
-			return returnT;
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			return new ReturnT<>(ReturnT.FAIL_CODE, e.getMessage());
-		}
-	}
+    @RequestMapping(value = "/logDetailCat", method = RequestMethod.GET)
+    @ApiOperation("运行日志详情")
+    public ReturnT<LogResult> logDetailCat(HttpServletRequest request, String executorAddress) {
+        //添加日志审计功能
+        try {
+            InputStream in = new FileInputStream(executorAddress);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) != -1) {
+                bos.write(buf, 0, len);
+            }
+            String logContent = new String(bos.toByteArray());
+            if (bos != null) {
+                bos.close();
+            }
+            if (in != null) {
+                in.close();
+            }
+            //@TODO 查看日志
+            ReturnT<LogResult> returnT = new ReturnT<>(ReturnT.SUCCESS_CODE, "查询日志成功");
+            LogResult logResult = new LogResult(0, 0, logContent, true);
+            returnT.setContent(logResult);
+            return returnT;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return new ReturnT<>(ReturnT.FAIL_CODE, e.getMessage());
+        }
+    }
 
     @RequestMapping(value = "/logKill", method = RequestMethod.POST)
     @ApiOperation("kill任务")
@@ -186,9 +183,9 @@ public class JobLogController {
     @ApiOperation("停止该job作业")
     @PostMapping("/killJob")
     public ReturnT<String> killJob(@RequestBody JobLog log) {
-		//获取到任务的ID，执行脚本程序杀掉
-		//@TODO 停掉作业
-		String processId = log.getProcessId();
-		return KillJob.trigger(processId);
+        //获取到任务的ID，执行脚本程序杀掉
+        //@TODO 停掉作业
+        String processId = log.getProcessId();
+        return KillJob.trigger(processId);
     }
 }

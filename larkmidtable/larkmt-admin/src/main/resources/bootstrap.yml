@@ -1,6 +1,6 @@
 spring:
   application:
-    name: larkmt-admin
+    name: larkmidtable
   profiles:
     active: dev
   cloud:

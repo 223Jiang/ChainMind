@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.larkmt.cn.admin.base.BaseController;
-import com.larkmt.cn.admin.service.JobProjectService;
 import com.larkmt.cn.admin.entity.JobProject;
+import com.larkmt.cn.admin.service.JobProjectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +17,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @Author: LarkMidTable
  * @Date: 2020/9/16 11:14
  * @Description: 项目管理模块
  **/
 @RestController
-@RequestMapping("/api/jobProject")
+@RequestMapping("/larkmidtable/api/jobProject")
 @Api(tags = "项目管理模块")
 public class JobProjectController extends BaseController {
 
@@ -39,8 +38,8 @@ public class JobProjectController extends BaseController {
     @GetMapping
     @ApiOperation("分页查询所有数据")
     public R<IPage<JobProject>> selectAll(@RequestParam(value = "searchVal", required = false) String searchVal,
-										  @RequestParam("pageSize") Integer pageSize,
-										  @RequestParam("pageNo") Integer pageNo) {
+                                          @RequestParam("pageSize") Integer pageSize,
+                                          @RequestParam("pageNo") Integer pageNo) {
 
         return success(jobProjectService.getProjectListPaging(pageSize, pageNo, searchVal));
     }
@@ -67,7 +66,7 @@ public class JobProjectController extends BaseController {
     @ApiOperation("通过主键查询单条数据")
     @GetMapping("{id}")
     public R<JobProject> selectOne(@PathVariable Serializable id) {
-        return success(this.jobProjectService.getById(id));
+        return success(jobProjectService.getById(id));
     }
 
     /**
@@ -81,7 +80,7 @@ public class JobProjectController extends BaseController {
     public R<Boolean> insert(HttpServletRequest request, @RequestBody JobProject entity) {
         entity.setUserId(getCurrentUserId(request));
         entity.setCreateTime(new Date());
-        return success(this.jobProjectService.save(entity));
+        return success(jobProjectService.save(entity));
     }
 
 
@@ -98,7 +97,7 @@ public class JobProjectController extends BaseController {
         project.setName(entity.getName());
         project.setDescription(entity.getDescription());
         project.setUpdateTime(new Date());
-        return success(this.jobProjectService.updateById(entity));
+        return success(jobProjectService.updateById(entity));
     }
 
     /**
@@ -110,6 +109,6 @@ public class JobProjectController extends BaseController {
     @DeleteMapping
     @ApiOperation("删除数据")
     public R<Boolean> delete(@RequestParam("idList") List<Long> idList) {
-        return success(this.jobProjectService.removeByIds(idList));
+        return success(jobProjectService.removeByIds(idList));
     }
 }

@@ -1,13 +1,13 @@
 package com.larkmt.cn.admin.controller;
 
+import com.larkmt.cn.admin.core.util.I18nUtil;
+import com.larkmt.cn.admin.entity.JobGroup;
+import com.larkmt.cn.admin.entity.JobRegistry;
 import com.larkmt.cn.admin.mapper.JobGroupMapper;
 import com.larkmt.cn.admin.mapper.JobInfoMapper;
 import com.larkmt.cn.admin.mapper.JobRegistryMapper;
 import com.larkmt.core.biz.model.ReturnT;
 import com.larkmt.core.enums.RegistryConfig;
-import com.larkmt.cn.admin.core.util.I18nUtil;
-import com.larkmt.cn.admin.entity.JobGroup;
-import com.larkmt.cn.admin.entity.JobRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -17,13 +17,12 @@ import javax.annotation.Resource;
 import java.util.*;
 
 /**
- *
  * @Author: LarkMidTable
  * @Date: 2020/9/16 11:14
  * @Description: 执行器管理接口
  **/
 @RestController
-@RequestMapping("/api/jobGroup")
+@RequestMapping("/larkmidtable/api/jobGroup")
 @Api(tags = "执行器管理接口")
 public class JobGroupController {
 
@@ -46,22 +45,22 @@ public class JobGroupController {
 
         // valid
         if (jobGroup.getAppName() == null || jobGroup.getAppName().trim().length() == 0) {
-            return new ReturnT<String>(500, (I18nUtil.getString("system_please_input") + "AppName"));
+            return new ReturnT<>(500, (I18nUtil.getString("system_please_input") + "AppName"));
         }
         if (jobGroup.getAppName().length() < 4 || jobGroup.getAppName().length() > 64) {
-            return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_appName_length"));
+            return new ReturnT<>(500, I18nUtil.getString("jobgroup_field_appName_length"));
         }
         if (jobGroup.getTitle() == null || jobGroup.getTitle().trim().length() == 0) {
-            return new ReturnT<String>(500, (I18nUtil.getString("system_please_input") + I18nUtil.getString("jobgroup_field_title")));
+            return new ReturnT<>(500, (I18nUtil.getString("system_please_input") + I18nUtil.getString("jobgroup_field_title")));
         }
         if (jobGroup.getAddressType() != 0) {
             if (jobGroup.getAddressList() == null || jobGroup.getAddressList().trim().length() == 0) {
-                return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_addressType_limit"));
+                return new ReturnT<>(500, I18nUtil.getString("jobgroup_field_addressType_limit"));
             }
             String[] addresses = jobGroup.getAddressList().split(",");
             for (String item : addresses) {
                 if (item == null || item.trim().length() == 0) {
-                    return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_registryList_invalid"));
+                    return new ReturnT<>(500, I18nUtil.getString("jobgroup_field_registryList_invalid"));
                 }
             }
         }
@@ -75,13 +74,13 @@ public class JobGroupController {
     public ReturnT<String> update(@RequestBody JobGroup jobGroup) {
         // valid
         if (jobGroup.getAppName() == null || jobGroup.getAppName().trim().length() == 0) {
-            return new ReturnT<String>(500, (I18nUtil.getString("system_please_input") + "AppName"));
+            return new ReturnT<>(500, (I18nUtil.getString("system_please_input") + "AppName"));
         }
         if (jobGroup.getAppName().length() < 4 || jobGroup.getAppName().length() > 64) {
-            return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_appName_length"));
+            return new ReturnT<>(500, I18nUtil.getString("jobgroup_field_appName_length"));
         }
         if (jobGroup.getTitle() == null || jobGroup.getTitle().trim().length() == 0) {
-            return new ReturnT<String>(500, (I18nUtil.getString("system_please_input") + I18nUtil.getString("jobgroup_field_title")));
+            return new ReturnT<>(500, (I18nUtil.getString("system_please_input") + I18nUtil.getString("jobgroup_field_title")));
         }
         if (jobGroup.getAddressType() == 0) {
             // 0=自动注册
@@ -99,12 +98,12 @@ public class JobGroupController {
         } else {
             // 1=手动录入
             if (jobGroup.getAddressList() == null || jobGroup.getAddressList().trim().length() == 0) {
-                return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_addressType_limit"));
+                return new ReturnT<>(500, I18nUtil.getString("jobgroup_field_addressType_limit"));
             }
             String[] addresses = jobGroup.getAddressList().split(",");
             for (String item : addresses) {
                 if (item == null || item.trim().length() == 0) {
-                    return new ReturnT<String>(500, I18nUtil.getString("jobgroup_field_registryList_invalid"));
+                    return new ReturnT<>(500, I18nUtil.getString("jobgroup_field_registryList_invalid"));
                 }
             }
         }
@@ -140,7 +139,7 @@ public class JobGroupController {
     public ReturnT<String> remove(int id) {
 
         // valid
-        int count = jobInfoMapper.pageListCount(0, 10, id, -1, null, null, 0,null);
+        int count = jobInfoMapper.pageListCount(0, 10, id, -1, null, null, 0, null);
         if (count > 0) {
             return new ReturnT<>(500, I18nUtil.getString("jobgroup_del_limit_0"));
         }

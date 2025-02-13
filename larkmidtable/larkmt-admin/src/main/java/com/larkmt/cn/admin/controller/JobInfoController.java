@@ -2,16 +2,15 @@ package com.larkmt.cn.admin.controller;
 
 
 import com.larkmt.cn.admin.base.BaseController;
+import com.larkmt.cn.admin.core.cron.CronExpression;
+import com.larkmt.cn.admin.core.thread.JobTriggerPoolHelper;
+import com.larkmt.cn.admin.core.util.I18nUtil;
 import com.larkmt.cn.admin.dto.FlinkXBatchJsonBuildDto;
 import com.larkmt.cn.admin.dto.TriggerJobDto;
+import com.larkmt.cn.admin.entity.JobInfo;
 import com.larkmt.cn.admin.service.JobService;
 import com.larkmt.core.biz.model.ReturnT;
 import com.larkmt.core.util.DateUtil;
-import com.larkmt.cn.admin.core.cron.CronExpression;
-import com.larkmt.cn.admin.core.thread.JobTriggerPoolHelper;
-import com.larkmt.cn.admin.core.trigger.TriggerTypeEnum;
-import com.larkmt.cn.admin.core.util.I18nUtil;
-import com.larkmt.cn.admin.entity.JobInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -26,14 +25,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @Author: LarkMidTable
  * @Date: 2020/9/16 11:14
  * @Description: 任务配置接口
  **/
 @Api(tags = "任务配置接口")
 @RestController
-@RequestMapping("/api/job")
+@RequestMapping("/larkmidtable/api/job")
 public class JobInfoController extends BaseController {
 
     @Resource
@@ -43,17 +41,17 @@ public class JobInfoController extends BaseController {
     @GetMapping("/pageList")
     @ApiOperation("任务列表")
     public ReturnT<Map<String, Object>> pageList(@RequestParam(value = "current", required = false, defaultValue = "0") int current,
-                                        @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                                                 @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                  @RequestParam("jobGroup") int jobGroup, @RequestParam("triggerStatus") int triggerStatus,
                                                  @RequestParam("jobDesc") String jobDesc, @RequestParam("glueType") String glueType,
                                                  @RequestParam("projectIds") Integer[] projectIds) {
 
-        return new ReturnT<>(jobService.pageList((current-1)*size, size, jobGroup, triggerStatus, jobDesc, glueType, 0, projectIds));
+        return new ReturnT<>(jobService.pageList((current - 1) * size, size, jobGroup, triggerStatus, jobDesc, glueType, 0, projectIds));
     }
 
     @GetMapping("/list")
     @ApiOperation("全部任务列表")
-    public ReturnT<List<JobInfo>> list(){
+    public ReturnT<List<JobInfo>> list() {
         return new ReturnT<>(jobService.list());
     }
 
@@ -66,7 +64,7 @@ public class JobInfoController extends BaseController {
 
     @PostMapping("/update")
     @ApiOperation("更新任务")
-    public ReturnT<String> update(HttpServletRequest request,@RequestBody JobInfo jobInfo) {
+    public ReturnT<String> update(HttpServletRequest request, @RequestBody JobInfo jobInfo) {
         jobInfo.setUserId(getCurrentUserId(request));
         return jobService.update(jobInfo);
     }
@@ -77,13 +75,13 @@ public class JobInfoController extends BaseController {
         return jobService.remove(id);
     }
 
-    @RequestMapping(value = "/stop",method = RequestMethod.POST)
+    @RequestMapping(value = "/stop", method = RequestMethod.POST)
     @ApiOperation("停止任务")
     public ReturnT<String> pause(int id) {
         return jobService.stop(id);
     }
 
-    @RequestMapping(value = "/start",method = RequestMethod.POST)
+    @RequestMapping(value = "/start", method = RequestMethod.POST)
     @ApiOperation("开启任务")
     public ReturnT<String> start(int id) {
         return jobService.start(id);
@@ -92,17 +90,17 @@ public class JobInfoController extends BaseController {
     @PostMapping(value = "/trigger")
     @ApiOperation("触发任务")
     public ReturnT<String> triggerJob(@RequestBody TriggerJobDto dto) {
-		try {
-			String executorParam=dto.getExecutorParam();
-			if (executorParam == null) {
-				executorParam = "";
-			}
-			JobTriggerPoolHelper jobTriggerPoolHelper =  new JobTriggerPoolHelper();
-			jobTriggerPoolHelper.runJob(dto.getJobId());
-		} catch (Exception e) {
-			return ReturnT.FAIL;
-		}
-		return ReturnT.SUCCESS;
+        try {
+            String executorParam = dto.getExecutorParam();
+            if (executorParam == null) {
+                executorParam = "";
+            }
+            JobTriggerPoolHelper jobTriggerPoolHelper = new JobTriggerPoolHelper();
+            jobTriggerPoolHelper.runJob(dto.getJobId());
+        } catch (Exception e) {
+            return ReturnT.FAIL;
+        }
+        return ReturnT.SUCCESS;
     }
 
     @GetMapping("/nextTriggerTime")
@@ -129,7 +127,7 @@ public class JobInfoController extends BaseController {
     @PostMapping("/batchAdd")
     @ApiOperation("批量创建任务")
     public ReturnT<String> batchAdd(@RequestBody FlinkXBatchJsonBuildDto dto) throws IOException {
-        if (dto.getTemplateId() ==0) {
+        if (dto.getTemplateId() == 0) {
             return new ReturnT<>(ReturnT.FAIL_CODE, (I18nUtil.getString("system_please_choose") + I18nUtil.getString("jobinfo_field_temp")));
         }
         return jobService.batchAdd(dto);

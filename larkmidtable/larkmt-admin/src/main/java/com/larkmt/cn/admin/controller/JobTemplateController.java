@@ -2,12 +2,12 @@ package com.larkmt.cn.admin.controller;
 
 
 import com.larkmt.cn.admin.base.BaseController;
+import com.larkmt.cn.admin.core.cron.CronExpression;
+import com.larkmt.cn.admin.core.util.I18nUtil;
 import com.larkmt.cn.admin.entity.JobTemplate;
 import com.larkmt.cn.admin.service.JobTemplateService;
 import com.larkmt.core.biz.model.ReturnT;
 import com.larkmt.core.util.DateUtil;
-import com.larkmt.cn.admin.core.cron.CronExpression;
-import com.larkmt.cn.admin.core.util.I18nUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +22,12 @@ import java.util.Map;
 
 
 /**
- *
  * @Author: LarkMidTable
  * @Date: 2020/9/16 11:14
  * @Description: 任务模板
  **/
 @RestController
-@RequestMapping("/api/jobTemplate")
+@RequestMapping("/larkmidtable/api/jobTemplate")
 @Api(tags = "任务配置接口")
 public class JobTemplateController extends BaseController {
 
@@ -38,12 +37,12 @@ public class JobTemplateController extends BaseController {
     @GetMapping("/pageList")
     @ApiOperation("任务模板列表")
     public ReturnT<Map<String, Object>> pageList(@RequestParam(value = "current", required = false, defaultValue = "0") int current,
-                                        @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                                                 @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                  @RequestParam(value = "jobGroup") int jobGroup, @RequestParam(value = "jobDesc") String jobDesc,
                                                  @RequestParam(value = "executorHandler") String executorHandler,
-                                                 @RequestParam(value = "userId") int userId, @RequestParam(value = "projectIds",required = false) Integer[] projectIds) {
+                                                 @RequestParam(value = "userId") int userId, @RequestParam(value = "projectIds", required = false) Integer[] projectIds) {
 
-        return new ReturnT<>(jobTemplateService.pageList((current-1)*size, size, jobGroup, jobDesc, executorHandler, userId, projectIds));
+        return new ReturnT<>(jobTemplateService.pageList((current - 1) * size, size, jobGroup, jobDesc, executorHandler, userId, projectIds));
     }
 
     @PostMapping("/add")
@@ -55,7 +54,7 @@ public class JobTemplateController extends BaseController {
 
     @PostMapping("/update")
     @ApiOperation("更新任务")
-    public ReturnT<String> update(HttpServletRequest request,@RequestBody JobTemplate jobTemplate) {
+    public ReturnT<String> update(HttpServletRequest request, @RequestBody JobTemplate jobTemplate) {
         jobTemplate.setUserId(getCurrentUserId(request));
         return jobTemplateService.update(jobTemplate);
     }

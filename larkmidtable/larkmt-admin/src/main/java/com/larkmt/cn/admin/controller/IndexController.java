@@ -2,7 +2,6 @@ package com.larkmt.cn.admin.controller;
 
 import com.larkmt.cn.admin.service.JobService;
 import com.larkmt.core.biz.model.ReturnT;
-import com.larkmt.core.biz.model.ReturnT;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -19,15 +18,15 @@ import java.util.Map;
  *
  * @author jingwk 2019-12-22 16:13:16
  */
+
 /**
- *
  * @Author: LarkMidTable
  * @Date: 2020/9/16 11:14
  * @Description: 首页接口
  **/
 @RestController
 @Api(tags = "首页接口")
-@RequestMapping("/api")
+@RequestMapping("/larkmidtable/api")
 public class IndexController {
 
     @Resource

@@ -1,10 +1,10 @@
 package com.larkmt.cn.admin.controller;
 
-import com.larkmt.cn.admin.mapper.JobInfoMapper;
-import com.larkmt.cn.admin.mapper.JobLogGlueMapper;
 import com.larkmt.cn.admin.core.util.I18nUtil;
 import com.larkmt.cn.admin.entity.JobInfo;
 import com.larkmt.cn.admin.entity.JobLogGlue;
+import com.larkmt.cn.admin.mapper.JobInfoMapper;
+import com.larkmt.cn.admin.mapper.JobLogGlueMapper;
 import com.larkmt.core.biz.model.ReturnT;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,13 +19,12 @@ import java.util.Date;
 import static com.larkmt.core.biz.model.ReturnT.FAIL_CODE;
 
 /**
- *
  * @Author: LarkMidTable
  * @Date: 2020/9/16 11:14
  * @Description: 任务状态接口
  **/
 @RestController
-@RequestMapping("/jobcode")
+@RequestMapping("/larkmidtable/jobcode")
 @Api(tags = "任务状态接口")
 public class JobCodeController {
 

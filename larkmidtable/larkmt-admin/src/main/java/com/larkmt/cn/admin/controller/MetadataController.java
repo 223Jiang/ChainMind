@@ -6,20 +6,21 @@ import com.larkmt.cn.admin.service.DatasourceQueryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
 /**
- *
  * @Author: LarkMidTable
  * @Date: 2020/9/16 11:14
  * @Description: 查询数据库表名，字段的控制器
  **/
 @RestController
-@RequestMapping("api/metadata")
+@RequestMapping("/larkmidtable/api/metadata")
 @Api(tags = "jdbc数据库查询控制器")
 public class MetadataController extends BaseController {
 
@@ -47,8 +48,8 @@ public class MetadataController extends BaseController {
      */
     @GetMapping("/collectionNames")
     @ApiOperation("根据数据源id,dbname获取CollectionNames")
-    public R<List<String>> getCollectionNames(Long datasourceId,String dbName) throws IOException {
-        return success(datasourceQueryService.getCollectionNames(datasourceId,dbName));
+    public R<List<String>> getCollectionNames(Long datasourceId, String dbName) throws IOException {
+        return success(datasourceQueryService.getCollectionNames(datasourceId, dbName));
     }
 
     /**
@@ -71,8 +72,8 @@ public class MetadataController extends BaseController {
      */
     @GetMapping("/getTables")
     @ApiOperation("根据数据源id获取可用表名")
-    public R<List<String>> getTableNames(Long datasourceId,String tableSchema) throws IOException {
-        return success(datasourceQueryService.getTables(datasourceId,tableSchema));
+    public R<List<String>> getTableNames(Long datasourceId, String tableSchema) throws IOException {
+        return success(datasourceQueryService.getTables(datasourceId, tableSchema));
     }
 
     /**

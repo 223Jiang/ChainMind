@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.larkmt.cn.admin.base.BaseController;
 import com.larkmt.cn.admin.base.BaseForm;
-import com.larkmt.cn.admin.service.JobDatasourceService;
 import com.larkmt.cn.admin.core.util.LocalCacheUtil;
 import com.larkmt.cn.admin.entity.JobDatasource;
+import com.larkmt.cn.admin.service.JobDatasourceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -20,13 +20,12 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @Author: LarkMidTable
  * @Date: 2020/9/16 11:14
  * @Description: jdbc数据源配置控制器层
  **/
 @RestController
-@RequestMapping("/api/jobJdbcDatasource")
+@RequestMapping("/larkmidtable/api/jobJdbcDatasource")
 @Api(tags = "jdbc数据源配置接口")
 public class JobDatasourceController extends BaseController {
     /**
@@ -57,12 +56,13 @@ public class JobDatasourceController extends BaseController {
 
     /**
      * 获取所有数据源
+     *
      * @return
      */
     @ApiOperation("获取所有数据源")
     @GetMapping("/all")
     public R<List<JobDatasource>> selectAllDatasource() {
-        return success(this.jobJdbcDatasourceService.selectAllDatasource());
+        return success(jobJdbcDatasourceService.selectAllDatasource());
     }
 
     /**
@@ -74,7 +74,7 @@ public class JobDatasourceController extends BaseController {
     @ApiOperation("通过主键查询单条数据")
     @GetMapping("{id}")
     public R<JobDatasource> selectOne(@PathVariable Serializable id) {
-        return success(this.jobJdbcDatasourceService.getById(id));
+        return success(jobJdbcDatasourceService.getById(id));
     }
 
     /**
@@ -86,7 +86,7 @@ public class JobDatasourceController extends BaseController {
     @ApiOperation("新增数据")
     @PostMapping
     public R<Boolean> insert(@RequestBody JobDatasource entity) {
-        return success(this.jobJdbcDatasourceService.save(entity));
+        return success(jobJdbcDatasourceService.save(entity));
     }
 
     /**
@@ -106,7 +106,7 @@ public class JobDatasourceController extends BaseController {
         if (null != entity.getJdbcPassword() && entity.getJdbcPassword().equals(d.getJdbcPassword())) {
             entity.setJdbcPassword(null);
         }
-        return success(this.jobJdbcDatasourceService.updateById(entity));
+        return success(jobJdbcDatasourceService.updateById(entity));
     }
 
     /**
@@ -118,17 +118,18 @@ public class JobDatasourceController extends BaseController {
     @DeleteMapping
     @ApiOperation("删除数据")
     public R<Boolean> delete(@RequestParam("idList") List<Long> idList) {
-        return success(this.jobJdbcDatasourceService.removeByIds(idList));
+        return success(jobJdbcDatasourceService.removeByIds(idList));
     }
 
     /**
      * 测试数据源
+     *
      * @param jobJdbcDatasource
      * @return
      */
     @PostMapping("/test")
     @ApiOperation("测试数据")
-    public R<Boolean> dataSourceTest (@RequestBody JobDatasource jobJdbcDatasource) throws IOException {
+    public R<Boolean> dataSourceTest(@RequestBody JobDatasource jobJdbcDatasource) throws IOException {
         return success(jobJdbcDatasourceService.dataSourceTest(jobJdbcDatasource));
     }
 }
