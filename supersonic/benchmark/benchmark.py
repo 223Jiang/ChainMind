@@ -18,7 +18,7 @@ import traceback
 
 class BatchTest:
     def __init__(self, url, agentId, chatId, userName):
-        self.base_url = url + '/api/chat/query/'
+        self.base_url = url + '/supersonic/api/chat/query/'
         self.agentId = agentId
         self.auth_token = self.__get_authorization(userName)
         self.chatId = chatId

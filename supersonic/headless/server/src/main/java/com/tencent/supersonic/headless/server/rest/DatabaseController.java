@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/semantic/database")
+@RequestMapping("/supersonic/api/semantic/database")
 public class DatabaseController {
 
     private DatabaseService databaseService;
@@ -38,28 +38,28 @@ public class DatabaseController {
 
     @PostMapping("/testConnect")
     public boolean testConnect(@RequestBody DatabaseReq databaseReq, HttpServletRequest request,
-            HttpServletResponse response) {
+                               HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return databaseService.testConnect(databaseReq, user);
     }
 
     @PostMapping("/createOrUpdateDatabase")
     public DatabaseResp createOrUpdateDatabase(@RequestBody DatabaseReq databaseReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                               HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return databaseService.createOrUpdateDatabase(databaseReq, user);
     }
 
     @GetMapping("/{id}")
     public DatabaseResp getDatabase(@PathVariable("id") Long id, HttpServletRequest request,
-            HttpServletResponse response) {
+                                    HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return databaseService.getDatabase(id, user);
     }
 
     @GetMapping("/getDatabaseList")
     public List<DatabaseResp> getDatabaseList(HttpServletRequest request,
-            HttpServletResponse response) {
+                                              HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return databaseService.getDatabaseList(user);
     }
@@ -72,7 +72,7 @@ public class DatabaseController {
 
     @PostMapping("/executeSql")
     public SemanticQueryResp executeSql(@RequestBody SqlExecuteReq sqlExecuteReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                        HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return databaseService.executeSql(sqlExecuteReq, sqlExecuteReq.getId(), user);
     }
@@ -84,13 +84,13 @@ public class DatabaseController {
 
     @RequestMapping("/getTables")
     public List<String> getTables(@RequestParam("databaseId") Long databaseId,
-            @RequestParam("db") String db) throws SQLException {
+                                  @RequestParam("db") String db) throws SQLException {
         return databaseService.getTables(databaseId, db);
     }
 
     @RequestMapping("/getColumnsByName")
     public List<DBColumn> getColumnsByName(@RequestParam("databaseId") Long databaseId,
-            @RequestParam("db") String db, @RequestParam("table") String table)
+                                           @RequestParam("db") String db, @RequestParam("table") String table)
             throws SQLException {
         return databaseService.getColumns(databaseId, db, table);
     }
@@ -103,7 +103,7 @@ public class DatabaseController {
 
     @GetMapping("/getDatabaseParameters")
     public Map<String, List<DatabaseParameter>> getDatabaseParameters(HttpServletRequest request,
-            HttpServletResponse response) {
+                                                                      HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return databaseService.getDatabaseParameters(user);
     }

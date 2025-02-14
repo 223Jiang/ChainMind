@@ -31,7 +31,7 @@ workbox.routing.registerNavigationRoute('/index.html');
 /**
  * Handle API requests
  */
-workbox.routing.registerRoute(/\/api\//, workbox.strategies.networkFirst());
+workbox.routing.registerRoute(/\/supersonic/api\//, workbox.strategies.networkFirst());
 
 /**
  * Handle third party requests

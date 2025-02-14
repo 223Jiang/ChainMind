@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/semantic/tag")
+@RequestMapping("/supersonic/api/semantic/tag")
 public class TagController {
 
     private final TagMetaService tagMetaService;
@@ -50,7 +50,7 @@ public class TagController {
      */
     @PostMapping("/create")
     public TagResp create(@RequestBody TagReq tagReq, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+                          HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         return tagMetaService.create(tagReq, user);
     }
@@ -66,7 +66,7 @@ public class TagController {
      */
     @PostMapping("/create/batch")
     public Integer createBatch(@RequestBody @Valid List<TagReq> tagReqList,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+                               HttpServletRequest request, HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         return tagMetaService.createBatch(tagReqList, user);
     }
@@ -82,7 +82,7 @@ public class TagController {
      */
     @PostMapping("/delete/batch")
     public Boolean deleteBatch(@RequestBody @Valid List<TagDeleteReq> tagDeleteReqList,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+                               HttpServletRequest request, HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         return tagMetaService.deleteBatch(tagDeleteReqList, user);
     }
@@ -98,7 +98,7 @@ public class TagController {
      */
     @DeleteMapping("delete/{id}")
     public Boolean delete(@PathVariable("id") Long id, HttpServletRequest request,
-            HttpServletResponse response) {
+                          HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         tagMetaService.delete(id, user);
         return true;
@@ -114,7 +114,7 @@ public class TagController {
      */
     @GetMapping("getTag/{id}")
     public TagResp getTag(@PathVariable("id") Long id, HttpServletRequest request,
-            HttpServletResponse response) {
+                          HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return tagMetaService.getTag(id, user);
     }
@@ -141,7 +141,7 @@ public class TagController {
      */
     @PostMapping("/value/distribution")
     public ItemValueResp queryTagValue(@RequestBody ItemValueReq itemValueReq,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                       HttpServletRequest request, HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         return tagQueryService.queryTagValue(itemValueReq, user);
     }
@@ -157,7 +157,7 @@ public class TagController {
      */
     @PostMapping("/queryTag/market")
     public PageInfo<TagResp> queryTagMarketPage(@RequestBody TagFilterPageReq tagMarketPageReq,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                                HttpServletRequest request, HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         return tagMetaService.queryTagMarketPage(tagMarketPageReq, user);
     }

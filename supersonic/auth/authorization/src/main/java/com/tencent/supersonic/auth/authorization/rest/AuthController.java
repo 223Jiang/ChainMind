@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/supersonic/api/auth")
 @Slf4j
 public class AuthController {
 
@@ -32,11 +32,13 @@ public class AuthController {
 
     @GetMapping("/queryGroup")
     public List<AuthGroup> queryAuthGroup(@RequestParam("modelId") String modelId,
-            @RequestParam(value = "groupId", required = false) Integer groupId) {
+                                          @RequestParam(value = "groupId", required = false) Integer groupId) {
         return authService.queryAuthGroups(modelId, groupId);
     }
 
-    /** 新建权限组 */
+    /**
+     * 新建权限组
+     */
     @PostMapping("/createGroup")
     public void newAuthGroup(@RequestBody AuthGroup group) {
         group.setGroupId(null);
@@ -69,7 +71,7 @@ public class AuthController {
      */
     @PostMapping("/queryAuthorizedRes")
     public AuthorizedResourceResp queryAuthorizedResources(@RequestBody QueryAuthResReq req,
-            HttpServletRequest request, HttpServletResponse response) {
+                                                           HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return authService.queryAuthorizedResources(req, user);
     }

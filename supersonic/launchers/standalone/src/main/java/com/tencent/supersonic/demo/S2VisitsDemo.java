@@ -44,8 +44,8 @@ public class S2VisitsDemo extends S2BaseDemo {
             TagObjectResp s2TagObject = addTagObjectUser(s2Domain);
 
             // create models
-            ModelResp userModel = addModel_1(s2Domain, demoDatabase, s2TagObject);
-            ModelResp pvUvModel = addModel_2(s2Domain, demoDatabase);
+            ModelResp userModel = addUserDepartmentModel(s2Domain, demoDatabase, s2TagObject);
+            ModelResp pvUvModel = addPvUvModel(s2Domain, demoDatabase);
             ModelResp stayTimeModel = addModel_3(s2Domain, demoDatabase);
             addModelRela_1(s2Domain, userModel, pvUvModel);
             addModelRela_2(s2Domain, userModel, stayTimeModel);
@@ -95,11 +95,7 @@ public class S2VisitsDemo extends S2BaseDemo {
     boolean checkNeedToRun() {
         List<DomainResp> domainList = domainService.getDomainList();
         for (DomainResp domainResp : domainList) {
-            /*if (domainResp.getBizName().equalsIgnoreCase("supersonic")) {
-                log.info("Already exist domain:supersonic, no need to run demo");
-                return false;
-            }*/
-            if (1 == 1) {
+            if (domainResp.getBizName().equalsIgnoreCase("supersonic")) {
                 log.info("Already exist domain:supersonic, no need to run demo");
                 return false;
             }
@@ -120,7 +116,7 @@ public class S2VisitsDemo extends S2BaseDemo {
                 .queryText(queryText).user(defaultUser).disableLLM(true).build());
     }
 
-    private Integer addAgent(long dataSetId) {
+    private Integer addAgent(Long dataSetId) {
         Agent agent = new Agent();
         agent.setName("算指标");
         agent.setDescription("帮助您用自然语言查询指标，支持时间限定、条件筛选、下钻维度以及聚合统计");
@@ -135,6 +131,9 @@ public class S2VisitsDemo extends S2BaseDemo {
         datasetTool.setId("1");
         datasetTool.setType(AgentToolType.DATASET);
         datasetTool.setDataSetIds(Lists.newArrayList(dataSetId));
+        if (toolConfig.getTools() == null) {
+            toolConfig.setTools(new ArrayList<>());
+        }
         toolConfig.getTools().add(datasetTool);
         agent.setToolConfig(JSONObject.toJSONString(toolConfig));
 
@@ -159,7 +158,7 @@ public class S2VisitsDemo extends S2BaseDemo {
         return domainService.createDomain(domainReq, defaultUser);
     }
 
-    public ModelResp addModel_1(DomainResp s2Domain, DatabaseResp s2Database,
+    public ModelResp addUserDepartmentModel(DomainResp s2Domain, DatabaseResp s2Database,
                                 TagObjectResp s2TagObject) throws Exception {
         ModelReq modelReq = new ModelReq();
         modelReq.setName("用户部门");
@@ -191,7 +190,7 @@ public class S2VisitsDemo extends S2BaseDemo {
         return modelService.createModel(modelReq, defaultUser);
     }
 
-    public ModelResp addModel_2(DomainResp s2Domain, DatabaseResp s2Database) throws Exception {
+    public ModelResp addPvUvModel(DomainResp s2Domain, DatabaseResp s2Database) throws Exception {
         ModelReq modelReq = new ModelReq();
         modelReq.setName("PVUV统计");
         modelReq.setBizName("s2_pv_uv_statis");
@@ -208,10 +207,10 @@ public class S2VisitsDemo extends S2BaseDemo {
         modelDetail.setIdentifiers(identifiers);
 
         List<Dim> dimensions = new ArrayList<>();
-        Dim dimension1 = new Dim("", "imp_date", DimensionType.partition_time.name(), 0);
+        Dim dimension1 = new Dim("日期", "imp_date", DimensionType.partition_time.name(), 0);
         dimension1.setTypeParams(new DimensionTimeTypeParams());
         dimensions.add(dimension1);
-        Dim dimension2 = new Dim("", "page", DimensionType.categorical.name(), 0);
+        Dim dimension2 = new Dim("页面", "page", DimensionType.categorical.name(), 0);
         dimension2.setExpr("page");
         dimensions.add(dimension2);
         modelDetail.setDimensions(dimensions);
@@ -519,7 +518,7 @@ public class S2VisitsDemo extends S2BaseDemo {
         pluginParseConfig.setExamples(Lists.newArrayList("tom最近访问超音数情况怎么样"));
         plugin1.setParseModeConfig(JSONObject.toJSONString(pluginParseConfig));
         WebBase webBase = new WebBase();
-        webBase.setUrl("http://localhost:9080/api/chat/plugin/pluginDemo");
+        webBase.setUrl("http://localhost:9080/supersonic/api/chat/plugin/pluginDemo");
         webBase.setParamOptions(Lists.newArrayList());
         plugin1.setConfig(JsonUtil.toString(webBase));
         pluginService.createPlugin(plugin1, defaultUser);

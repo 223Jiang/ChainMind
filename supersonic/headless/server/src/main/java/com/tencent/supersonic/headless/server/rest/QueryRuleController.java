@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/semantic/query/rule")
+@RequestMapping("/supersonic/api/semantic/query/rule")
 public class QueryRuleController {
 
     private final QueryRuleService queryRuleService;
@@ -40,7 +40,7 @@ public class QueryRuleController {
      */
     @PostMapping("/create")
     public QueryRuleResp create(@RequestBody @Validated QueryRuleReq queryRuleReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return queryRuleService.addQueryRule(queryRuleReq, user);
     }
@@ -56,7 +56,7 @@ public class QueryRuleController {
      */
     @PostMapping("/update")
     public QueryRuleResp update(@RequestBody @Validated QueryRuleReq queryRuleReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return queryRuleService.updateQueryRule(queryRuleReq, user);
     }
@@ -71,7 +71,7 @@ public class QueryRuleController {
      */
     @DeleteMapping("delete/{id}")
     public Boolean delete(@PathVariable("id") Long id, HttpServletRequest request,
-            HttpServletResponse response) {
+                          HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return queryRuleService.dropQueryRule(id, user);
     }
@@ -85,7 +85,7 @@ public class QueryRuleController {
      */
     @PostMapping("query")
     public List<QueryRuleResp> query(@RequestBody @Validated QueryRuleFilter queryRuleFilter,
-            HttpServletRequest request, HttpServletResponse response) {
+                                     HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return queryRuleService.getQueryRuleList(queryRuleFilter, user);
     }

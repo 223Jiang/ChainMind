@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/semantic/modelRela")
+@RequestMapping("/supersonic/api/semantic/modelRela")
 public class ModelRelaController {
 
     @Autowired

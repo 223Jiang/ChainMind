@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/semantic/metric")
+@RequestMapping("/supersonic/api/semantic/metric")
 public class MetricController {
 
     private MetricService metricService;
@@ -41,21 +41,21 @@ public class MetricController {
 
     @PostMapping("/createMetric")
     public MetricResp createMetric(@RequestBody MetricReq metricReq, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+                                   HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         return metricService.createMetric(metricReq, user);
     }
 
     @PostMapping("/updateMetric")
     public MetricResp updateMetric(@RequestBody MetricReq metricReq, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+                                   HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         return metricService.updateMetric(metricReq, user);
     }
 
     @PostMapping("/batchUpdateStatus")
     public Boolean batchUpdateStatus(@RequestBody MetaBatchReq metaBatchReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                     HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         metricService.batchUpdateStatus(metaBatchReq, user);
         return true;
@@ -63,7 +63,7 @@ public class MetricController {
 
     @PostMapping("/batchPublish")
     public Boolean batchPublish(@RequestBody MetaBatchReq metaBatchReq, HttpServletRequest request,
-            HttpServletResponse response) {
+                                HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         metricService.batchPublish(metaBatchReq.getIds(), user);
         return true;
@@ -71,7 +71,7 @@ public class MetricController {
 
     @PostMapping("/batchUnPublish")
     public Boolean batchUnPublish(@RequestBody MetaBatchReq metaBatchReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                  HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         metricService.batchUnPublish(metaBatchReq.getIds(), user);
         return true;
@@ -79,7 +79,7 @@ public class MetricController {
 
     @PostMapping("/batchUpdateClassifications")
     public Boolean batchUpdateClassifications(@RequestBody MetaBatchReq metaBatchReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                              HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         metricService.batchUpdateClassifications(metaBatchReq, user);
         return true;
@@ -87,7 +87,7 @@ public class MetricController {
 
     @PostMapping("/batchUpdateSensitiveLevel")
     public Boolean batchUpdateSensitiveLevel(@RequestBody MetaBatchReq metaBatchReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                             HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         metricService.batchUpdateSensitiveLevel(metaBatchReq, user);
         return true;
@@ -95,7 +95,7 @@ public class MetricController {
 
     @PostMapping("/mockMetricAlias")
     public List<String> mockMetricAlias(@RequestBody MetricBaseReq metricReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                        HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return metricService.mockAlias(metricReq, "indicator", user);
     }
@@ -113,7 +113,7 @@ public class MetricController {
 
     @PostMapping("/queryMetric")
     public PageInfo<MetricResp> queryMetric(@RequestBody PageMetricReq pageMetricReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                            HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return metricService.queryMetricMarket(pageMetricReq, user);
     }
@@ -121,20 +121,20 @@ public class MetricController {
     @Deprecated
     @GetMapping("getMetric/{modelId}/{bizName}")
     public MetricResp getMetric(@PathVariable("modelId") Long modelId,
-            @PathVariable("bizName") String bizName) {
+                                @PathVariable("bizName") String bizName) {
         return metricService.getMetric(modelId, bizName);
     }
 
     @GetMapping("getMetric/{id}")
     public MetricResp getMetric(@PathVariable("id") Long id, HttpServletRequest request,
-            HttpServletResponse response) {
+                                HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return metricService.getMetric(id, user);
     }
 
     @DeleteMapping("deleteMetric/{id}")
     public Boolean deleteMetric(@PathVariable("id") Long id, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+                                HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         metricService.deleteMetric(id, user);
         return true;

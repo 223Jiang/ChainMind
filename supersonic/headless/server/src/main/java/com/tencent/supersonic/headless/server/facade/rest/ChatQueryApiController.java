@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/semantic/query")
+@RequestMapping("/supersonic/api/semantic/query")
 @Slf4j
 public class ChatQueryApiController {
 

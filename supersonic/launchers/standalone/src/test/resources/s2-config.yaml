@@ -27,7 +27,7 @@ s2:
   authentication:
     enable: true
     exclude:
-      path: /api/auth/user/register,/api/auth/user/login
+      path: /supersonic/api/auth/user/register,/supersonic/api/auth/user/login
     token:
       http:
         header:

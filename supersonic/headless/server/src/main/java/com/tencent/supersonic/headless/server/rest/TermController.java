@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/semantic/term")
+@RequestMapping("/supersonic/api/semantic/term")
 public class TermController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class TermController {
 
     @PostMapping("/saveOrUpdate")
     public boolean saveOrUpdate(@RequestBody TermReq termReq, HttpServletRequest request,
-            HttpServletResponse response) {
+                                HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         termService.saveOrUpdate(termReq, user);
         return true;
@@ -38,7 +38,7 @@ public class TermController {
 
     @GetMapping
     public List<TermResp> getTerms(@RequestParam("domainId") Long domainId,
-            @RequestParam(name = "queryKey", required = false) String queryKey) {
+                                   @RequestParam(name = "queryKey", required = false) String queryKey) {
         return termService.getTerms(domainId, queryKey);
     }
 

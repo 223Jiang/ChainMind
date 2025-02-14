@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/semantic/app")
+@RequestMapping("/supersonic/api/semantic/app")
 public class AppController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class AppController {
 
     @PostMapping
     public boolean save(@RequestBody AppReq app, HttpServletRequest request,
-            HttpServletResponse response) {
+                        HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         appService.save(app, user);
         return true;
@@ -38,7 +38,7 @@ public class AppController {
 
     @PutMapping
     public boolean update(@RequestBody AppReq app, HttpServletRequest request,
-            HttpServletResponse response) {
+                          HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         appService.update(app, user);
         return true;
@@ -46,7 +46,7 @@ public class AppController {
 
     @PutMapping("/online/{id}")
     public boolean online(@PathVariable("id") Integer id, HttpServletRequest request,
-            HttpServletResponse response) {
+                          HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         appService.online(id, user);
         return true;
@@ -54,7 +54,7 @@ public class AppController {
 
     @PutMapping("/offline/{id}")
     public boolean offline(@PathVariable("id") Integer id, HttpServletRequest request,
-            HttpServletResponse response) {
+                           HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         appService.offline(id, user);
         return true;
@@ -62,7 +62,7 @@ public class AppController {
 
     @DeleteMapping("/{id}")
     public boolean delete(@PathVariable("id") Integer id, HttpServletRequest request,
-            HttpServletResponse response) {
+                          HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         appService.delete(id, user);
         return true;
@@ -70,14 +70,14 @@ public class AppController {
 
     @GetMapping("/{id}")
     public AppDetailResp getApp(@PathVariable("id") Integer id, HttpServletRequest request,
-            HttpServletResponse response) {
+                                HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return appService.getApp(id, user);
     }
 
     @PostMapping("/page")
     public PageInfo<AppResp> pageApp(@RequestBody AppQueryReq appQueryReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                     HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return appService.pageApp(appQueryReq, user);
     }

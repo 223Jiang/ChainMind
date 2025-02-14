@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 
 @RestController
-@RequestMapping({"/api/chat/memory"})
+@RequestMapping({"/supersonic/api/chat/memory"})
 public class MemoryController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class MemoryController {
 
     @PostMapping("/createMemory")
     public Boolean createMemory(@RequestBody ChatMemoryCreateReq chatMemoryCreateReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         memoryService.createMemory(ChatMemoryDO.builder().agentId(chatMemoryCreateReq.getAgentId())
                 .s2sql(chatMemoryCreateReq.getS2sql()).question(chatMemoryCreateReq.getQuestion())
@@ -42,7 +42,7 @@ public class MemoryController {
 
     @PostMapping("/updateMemory")
     public Boolean updateMemory(@RequestBody ChatMemoryUpdateReq chatMemoryUpdateReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         memoryService.updateMemory(chatMemoryUpdateReq, user);
         return true;

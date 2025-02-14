@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/semantic/dimension")
+@RequestMapping("/supersonic/api/semantic/dimension")
 public class DimensionController {
 
     @Autowired
@@ -48,14 +48,14 @@ public class DimensionController {
      */
     @PostMapping("/createDimension")
     public DimensionResp createDimension(@RequestBody DimensionReq dimensionReq,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                         HttpServletRequest request, HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         return dimensionService.createDimension(dimensionReq, user);
     }
 
     @PostMapping("/updateDimension")
     public Boolean updateDimension(@RequestBody DimensionReq dimensionReq,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                   HttpServletRequest request, HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         dimensionService.updateDimension(dimensionReq, user);
         return true;
@@ -63,7 +63,7 @@ public class DimensionController {
 
     @PostMapping("/updateDimension/alias/value")
     public Boolean updateDimValueAlias(@RequestBody DimValueAliasReq req,
-            HttpServletRequest request, HttpServletResponse response) {
+                                       HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         dimensionService.updateDimValueAlias(req, user);
         return true;
@@ -71,7 +71,7 @@ public class DimensionController {
 
     @PostMapping("/batchUpdateStatus")
     public Boolean batchUpdateStatus(@RequestBody MetaBatchReq metaBatchReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                     HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         dimensionService.batchUpdateStatus(metaBatchReq, user);
         return true;
@@ -79,7 +79,7 @@ public class DimensionController {
 
     @PostMapping("/batchUpdateSensitiveLevel")
     public Boolean batchUpdateSensitiveLevel(@RequestBody MetaBatchReq metaBatchReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                             HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         dimensionService.batchUpdateSensitiveLevel(metaBatchReq, user);
         return true;
@@ -87,14 +87,14 @@ public class DimensionController {
 
     @PostMapping("/mockDimensionAlias")
     public List<String> mockMetricAlias(@RequestBody DimensionReq dimensionReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                        HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return dimensionService.mockAlias(dimensionReq, "dimension", user);
     }
 
     @PostMapping("/mockDimensionValuesAlias")
     public List<DimValueMap> mockDimensionValuesAlias(@RequestBody DimensionReq dimensionReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                                      HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return dimensionService.mockDimensionValueAlias(dimensionReq, user);
     }
@@ -113,7 +113,7 @@ public class DimensionController {
 
     @GetMapping("/{modelId}/{dimensionName}")
     public DimensionResp getDimensionDescByNameAndId(@PathVariable("modelId") Long modelId,
-            @PathVariable("dimensionName") String dimensionBizName) {
+                                                     @PathVariable("dimensionName") String dimensionBizName) {
         return dimensionService.getDimension(dimensionBizName, modelId);
     }
 
@@ -124,14 +124,14 @@ public class DimensionController {
 
     @PostMapping("/queryDimValue")
     public SemanticQueryResp queryDimValue(@RequestBody DimensionValueReq dimensionValueReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                           HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return queryService.queryDimensionValue(dimensionValueReq, user);
     }
 
     @DeleteMapping("deleteDimension/{id}")
     public Boolean deleteDimension(@PathVariable("id") Long id, HttpServletRequest request,
-            HttpServletResponse response) {
+                                   HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         dimensionService.deleteDimension(id, user);
         return true;

@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** * 创建收藏指标的逻辑 */
+/**
+ * 创建收藏指标的逻辑
+ */
 @RestController
-@RequestMapping("/api/semantic/collect")
+@RequestMapping("/supersonic/api/semantic/collect")
 public class CollectController {
 
     private CollectService collectService;
@@ -27,7 +29,7 @@ public class CollectController {
 
     @PostMapping("/createCollectionIndicators")
     public boolean createCollectionIndicators(@RequestBody CollectDO collectDO,
-            HttpServletRequest request, HttpServletResponse response) {
+                                              HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return collectService.collect(user, collectDO);
     }
@@ -35,14 +37,14 @@ public class CollectController {
     @Deprecated
     @DeleteMapping("/deleteCollectionIndicators/{id}")
     public boolean deleteCollectionIndicators(@PathVariable Long id, HttpServletRequest request,
-            HttpServletResponse response) {
+                                              HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return collectService.unCollect(user, id);
     }
 
     @PostMapping("/deleteCollectionIndicators")
     public boolean deleteCollectionIndicators(@RequestBody CollectDO collectDO,
-            HttpServletRequest request, HttpServletResponse response) {
+                                              HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return collectService.unCollect(user, collectDO);
     }

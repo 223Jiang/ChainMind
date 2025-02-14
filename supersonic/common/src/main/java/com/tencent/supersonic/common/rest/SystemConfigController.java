@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping({"/api/semantic/parameter"})
+@RequestMapping({"/supersonic/api/semantic/parameter"})
 public class SystemConfigController {
 
     @Autowired

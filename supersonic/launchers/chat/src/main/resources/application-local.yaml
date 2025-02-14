@@ -20,7 +20,7 @@ server:
 authentication:
   enable: true
   exclude:
-    path: /api/auth/user/register,/api/auth/user/login
+    path: /supersonic/api/auth/user/register,/supersonic/api/auth/user/login
   token:
     http:
       header:
@@ -32,7 +32,7 @@ semantic:
 
 llm:
   parser:
-    url:  http://127.0.0.1:9092
+    url: http://127.0.0.1:9092
 
 
 #langchain4j config

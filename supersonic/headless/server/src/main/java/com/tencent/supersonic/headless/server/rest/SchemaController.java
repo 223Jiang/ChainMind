@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/semantic/schema")
+@RequestMapping("/supersonic/api/semantic/schema")
 public class SchemaController {
 
     @Autowired
@@ -26,15 +26,15 @@ public class SchemaController {
 
     @GetMapping("/domain/list")
     public List<DomainResp> getDomainList(HttpServletRequest request,
-            HttpServletResponse response) {
+                                          HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return schemaService.getDomainList(user);
     }
 
     @GetMapping("/model/list")
     public List<ModelResp> getModelList(@RequestParam("domainId") Long domainId,
-            @RequestParam("authType") String authType, HttpServletRequest request,
-            HttpServletResponse response) {
+                                        @RequestParam("authType") String authType, HttpServletRequest request,
+                                        HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return schemaService.getModelList(user, AuthType.valueOf(authType), domainId);
     }

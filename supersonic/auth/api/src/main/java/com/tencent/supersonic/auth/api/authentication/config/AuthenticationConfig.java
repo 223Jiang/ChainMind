@@ -15,7 +15,7 @@ public class AuthenticationConfig {
     @Value("${s2.authentication.exclude.path:XXX}")
     private String excludePath;
 
-    @Value("${s2.authentication.include.path:/api}")
+    @Value("${s2.authentication.include.path:/supersonic/api/}")
     private String includePath;
 
     @Value("${s2.authentication.enable:false}")
@@ -47,7 +47,7 @@ public class AuthenticationConfig {
     private Long tokenTimeout;
 
     public Map<String, String> getAppKeyToSecretMap() {
-        return Arrays.stream(this.tokenAppSecret.split(",")).map(s -> s.split(":"))
+        return Arrays.stream(tokenAppSecret.split(",")).map(s -> s.split(":"))
                 .collect(Collectors.toMap(e -> e[0].trim(), e -> e[1].trim()));
     }
 }

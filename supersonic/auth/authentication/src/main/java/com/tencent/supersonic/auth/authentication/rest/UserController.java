@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/auth/user")
+@RequestMapping("/supersonic/api/auth/user")
 @Slf4j
 public class UserController {
 
@@ -34,7 +34,7 @@ public class UserController {
 
     @GetMapping("/getCurrentUser")
     public User getCurrentUser(HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse) {
+                               HttpServletResponse httpServletResponse) {
         return userService.getCurrentUser(httpServletRequest, httpServletResponse);
     }
 
@@ -75,7 +75,7 @@ public class UserController {
 
     @PostMapping("/generateToken")
     public UserToken generateToken(@RequestBody UserTokenReq userTokenReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                   HttpServletRequest request, HttpServletResponse response) {
         User user = userService.getCurrentUser(request, response);
         return userService.generateToken(userTokenReq.getName(), user.getName(),
                 userTokenReq.getExpireTime());

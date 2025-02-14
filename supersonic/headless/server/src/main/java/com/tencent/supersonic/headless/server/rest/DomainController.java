@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/semantic/domain")
+@RequestMapping("/supersonic/api/semantic/domain")
 public class DomainController {
 
     private DomainService domainService;
@@ -33,14 +33,14 @@ public class DomainController {
 
     @PostMapping("/createDomain")
     public DomainResp createDomain(@RequestBody DomainReq domainReq, HttpServletRequest request,
-            HttpServletResponse response) {
+                                   HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return domainService.createDomain(domainReq, user);
     }
 
     @PostMapping("/updateDomain")
     public DomainResp updateDomain(@RequestBody DomainUpdateReq domainUpdateReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                   HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return domainService.updateDomain(domainUpdateReq, user);
     }
@@ -53,7 +53,7 @@ public class DomainController {
 
     @GetMapping("/getDomainList")
     public List<DomainResp> getDomainList(HttpServletRequest request,
-            HttpServletResponse response) {
+                                          HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return domainService.getDomainListWithAdminAuth(user);
     }

@@ -26,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/semantic/query")
+@RequestMapping("/supersonic/api/semantic/query")
 @Slf4j
 public class SqlQueryApiController {
 

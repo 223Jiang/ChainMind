@@ -19,7 +19,7 @@ def write_sql(output_path,result):
     file.writelines(result)
     file.close()
 def get_pred_sql(query,url,agentId,chatId,authorization,default_sql):
-    url=url+"/api/chat/query/parse"
+    url=url+"/supersonic/api/chat/query/parse"
     data = {"agentId": agentId, "chatId":chatId,"queryText":query}
     header = {}
     header["Authorization"] =authorization

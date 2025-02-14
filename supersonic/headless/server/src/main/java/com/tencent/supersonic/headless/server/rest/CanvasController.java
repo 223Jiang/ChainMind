@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/semantic/viewInfo")
+@RequestMapping("/supersonic/api/semantic/viewInfo")
 public class CanvasController {
 
     @Autowired
@@ -29,7 +29,7 @@ public class CanvasController {
 
     @PostMapping("/createOrUpdateViewInfo")
     public CanvasDO createOrUpdateCanvas(@RequestBody CanvasReq canvasReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                         HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return canvasService.createOrUpdateCanvas(canvasReq, user);
     }
@@ -46,7 +46,7 @@ public class CanvasController {
 
     @GetMapping("/getDomainSchemaRela/{domainId}")
     public List<CanvasSchemaResp> getDomainSchema(@PathVariable("domainId") Long domainId,
-            HttpServletRequest request, HttpServletResponse response) {
+                                                  HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return canvasService.getCanvasSchema(domainId, user);
     }

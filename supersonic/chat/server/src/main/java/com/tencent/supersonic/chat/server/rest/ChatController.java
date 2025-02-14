@@ -1,8 +1,5 @@
 package com.tencent.supersonic.chat.server.rest;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.github.pagehelper.PageInfo;
 import com.tencent.supersonic.auth.api.authentication.utils.UserHolder;
 import com.tencent.supersonic.chat.api.pojo.request.PageQueryInfoReq;
@@ -13,10 +10,12 @@ import com.tencent.supersonic.chat.server.service.ChatManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
-@RequestMapping({"/api/chat/manage", "/openapi/chat/manage"})
+@RequestMapping({"/supersonic/api/chat/manage", "/supersonic/openapi/chat/manage"})
 public class ChatController {
 
     @Autowired
@@ -24,8 +23,8 @@ public class ChatController {
 
     @PostMapping("/save")
     public Boolean save(@RequestParam(value = "chatName") String chatName,
-            @RequestParam(value = "agentId", required = false) Integer agentId,
-            HttpServletRequest request, HttpServletResponse response) {
+                        @RequestParam(value = "agentId", required = false) Integer agentId,
+                        HttpServletRequest request, HttpServletResponse response) {
         chatService.addChat(UserHolder.findUser(request, response), chatName, agentId);
         return true;
     }
@@ -40,36 +39,36 @@ public class ChatController {
 
     @PostMapping("/delete")
     public Boolean deleteChat(@RequestParam(value = "chatId") long chatId,
-            HttpServletRequest request, HttpServletResponse response) {
+                              HttpServletRequest request, HttpServletResponse response) {
         String userName = UserHolder.findUser(request, response).getName();
         return chatService.deleteChat(chatId, userName);
     }
 
     @PostMapping("/updateChatName")
     public Boolean updateChatName(@RequestParam(value = "chatId") Long chatId,
-            @RequestParam(value = "chatName") String chatName, HttpServletRequest request,
-            HttpServletResponse response) {
+                                  @RequestParam(value = "chatName") String chatName, HttpServletRequest request,
+                                  HttpServletResponse response) {
         String userName = UserHolder.findUser(request, response).getName();
         return chatService.updateChatName(chatId, chatName, userName);
     }
 
     @PostMapping("/updateQAFeedback")
     public Boolean updateQAFeedback(@RequestParam(value = "id") Integer id,
-            @RequestParam(value = "score") Integer score,
-            @RequestParam(value = "feedback", required = false) String feedback) {
+                                    @RequestParam(value = "score") Integer score,
+                                    @RequestParam(value = "feedback", required = false) String feedback) {
         return chatService.updateFeedback(id, score, feedback);
     }
 
     @PostMapping("/updateChatIsTop")
     public Boolean updateChatIsTop(@RequestParam(value = "chatId") Long chatId,
-            @RequestParam(value = "isTop") int isTop) {
+                                   @RequestParam(value = "isTop") int isTop) {
         return chatService.updateChatIsTop(chatId, isTop);
     }
 
     @PostMapping("/pageQueryInfo")
     public PageInfo<QueryResp> pageQueryInfo(@RequestBody PageQueryInfoReq pageQueryInfoCommand,
-            @RequestParam(value = "chatId") long chatId, HttpServletRequest request,
-            HttpServletResponse response) {
+                                             @RequestParam(value = "chatId") long chatId, HttpServletRequest request,
+                                             HttpServletResponse response) {
         pageQueryInfoCommand.setUserName(UserHolder.findUser(request, response).getName());
         return chatService.queryInfo(pageQueryInfoCommand, chatId);
     }
@@ -87,7 +86,7 @@ public class ChatController {
 
     @PostMapping("/queryShowCase")
     public ShowCaseResp queryShowCase(@RequestBody PageQueryInfoReq pageQueryInfoCommand,
-            @RequestParam(value = "agentId") int agentId) {
+                                      @RequestParam(value = "agentId") int agentId) {
         return chatService.queryShowCase(pageQueryInfoCommand, agentId);
     }
 }

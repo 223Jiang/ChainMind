@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/semantic/dataSet")
+@RequestMapping("/supersonic/api/semantic/dataSet")
 public class DataSetController {
 
     @Autowired
@@ -31,14 +31,14 @@ public class DataSetController {
 
     @PostMapping
     public DataSetResp save(@RequestBody DataSetReq dataSetReq, HttpServletRequest request,
-            HttpServletResponse response) {
+                            HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return dataSetService.save(dataSetReq, user);
     }
 
     @PutMapping
     public DataSetResp update(@RequestBody DataSetReq dataSetReq, HttpServletRequest request,
-            HttpServletResponse response) {
+                              HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return dataSetService.update(dataSetReq, user);
     }
@@ -57,7 +57,7 @@ public class DataSetController {
 
     @DeleteMapping("/{id}")
     public Boolean delete(@PathVariable("id") Long id, HttpServletRequest request,
-            HttpServletResponse response) {
+                          HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         dataSetService.delete(id, user);
         return true;

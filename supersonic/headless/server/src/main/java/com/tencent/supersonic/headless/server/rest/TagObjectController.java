@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/semantic/tagObject")
+@RequestMapping("/supersonic/api/semantic/tagObject")
 public class TagObjectController {
 
     private final TagObjectService tagObjectService;
@@ -39,7 +39,7 @@ public class TagObjectController {
      */
     @PostMapping("/create")
     public TagObjectResp create(@RequestBody TagObjectReq tagObjectReq, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+                                HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         return tagObjectService.create(tagObjectReq, user);
     }
@@ -54,7 +54,7 @@ public class TagObjectController {
      */
     @PostMapping("/update")
     public TagObjectResp update(@RequestBody TagObjectReq tagObjectReq, HttpServletRequest request,
-            HttpServletResponse response) {
+                                HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
         return tagObjectService.update(tagObjectReq, user);
     }
@@ -70,7 +70,7 @@ public class TagObjectController {
      */
     @DeleteMapping("delete/{id}")
     public Boolean delete(@PathVariable("id") Long id, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+                          HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         tagObjectService.delete(id, user, true);
         return true;
@@ -87,7 +87,7 @@ public class TagObjectController {
      */
     @PostMapping("/query")
     public List<TagObjectResp> queryTagObject(@RequestBody TagObjectFilter filter,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                              HttpServletRequest request, HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         return tagObjectService.getTagObjects(filter, user);
     }

@@ -1,9 +1,5 @@
 package com.tencent.supersonic.chat.server.rest;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
 import com.tencent.supersonic.auth.api.authentication.utils.UserHolder;
 import com.tencent.supersonic.chat.api.pojo.request.ChatExecuteReq;
 import com.tencent.supersonic.chat.api.pojo.request.ChatParseReq;
@@ -22,9 +18,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** query controller */
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+/**
+ * query controller
+ */
 @RestController
-@RequestMapping({"/api/chat/query", "/openapi/chat/query"})
+@RequestMapping({"/supersonic/api/chat/query", "/supersonic/openapi/chat/query"})
 public class ChatQueryController {
 
     @Autowired
@@ -32,28 +34,28 @@ public class ChatQueryController {
 
     @PostMapping("search")
     public Object search(@RequestBody ChatParseReq chatParseReq, HttpServletRequest request,
-            HttpServletResponse response) {
+                         HttpServletResponse response) {
         chatParseReq.setUser(UserHolder.findUser(request, response));
         return chatQueryService.search(chatParseReq);
     }
 
     @PostMapping("parse")
     public Object parse(@RequestBody ChatParseReq chatParseReq, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+                        HttpServletResponse response) throws Exception {
         chatParseReq.setUser(UserHolder.findUser(request, response));
         return chatQueryService.parse(chatParseReq);
     }
 
     @PostMapping("execute")
     public Object execute(@RequestBody ChatExecuteReq chatExecuteReq, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+                          HttpServletResponse response) throws Exception {
         chatExecuteReq.setUser(UserHolder.findUser(request, response));
         return chatQueryService.execute(chatExecuteReq);
     }
 
     @PostMapping("/")
     public Object query(@RequestBody ChatParseReq chatParseReq, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+                        HttpServletResponse response) throws Exception {
         User user = UserHolder.findUser(request, response);
         chatParseReq.setUser(user);
         ChatParseResp parseResp = chatQueryService.parse(chatParseReq);
@@ -71,14 +73,14 @@ public class ChatQueryController {
 
     @PostMapping("queryData")
     public Object queryData(@RequestBody ChatQueryDataReq chatQueryDataReq,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+                            HttpServletRequest request, HttpServletResponse response) throws Exception {
         chatQueryDataReq.setUser(UserHolder.findUser(request, response));
         return chatQueryService.queryData(chatQueryDataReq, UserHolder.findUser(request, response));
     }
 
     @PostMapping("queryDimensionValue")
     public Object queryDimensionValue(@RequestBody @Valid DimensionValueReq dimensionValueReq,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                      HttpServletRequest request, HttpServletResponse response) throws Exception {
         return chatQueryService.queryDimensionValue(dimensionValueReq,
                 UserHolder.findUser(request, response));
     }
