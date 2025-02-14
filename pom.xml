@@ -30,6 +30,14 @@
     </properties>
     <dependencyManagement>
         <dependencies>
+            <!-- 新增Jackson版本统一管理 -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.15.3</version> <!-- 指定需要的版本 -->
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- SpringCloud 依赖 -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
