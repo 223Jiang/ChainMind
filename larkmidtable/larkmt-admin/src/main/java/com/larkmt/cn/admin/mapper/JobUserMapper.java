@@ -35,6 +35,5 @@ public interface JobUserMapper {
 
     int delete(@Param("id") int id);
 
-
-
+    int deleteTheUser(@Param("correlationId") String correlationId);
 }

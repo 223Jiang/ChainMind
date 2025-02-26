@@ -40,4 +40,8 @@ public interface UserAdaptor {
     UserToken getUserToken(Long id);
 
     List<UserToken> getUserTokens(String userName);
+
+    void modifyTheUser(UserReq userReq);
+
+    int deleteTheUser(String correlationId);
 }

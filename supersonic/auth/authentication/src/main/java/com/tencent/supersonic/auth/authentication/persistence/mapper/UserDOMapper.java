@@ -16,4 +16,8 @@ public interface UserDOMapper {
     List<UserDO> selectByExample(UserDOExample example);
 
     void updateByPrimaryKey(UserDO userDO);
+
+    void modifyTheUser(UserDO userDO);
+
+    int deleteTheUser(String correlationId);
 }

@@ -240,6 +240,33 @@ public class DefaultUserAdaptor implements UserAdaptor {
         return userTokens;
     }
 
+    @Override
+    public void modifyTheUser(UserReq userReq) {
+        UserRepository userRepository = ContextUtils.getBean(UserRepository.class);
+        UserDO userDO = new UserDO();
+        userDO.setName(userReq.getName());
+        userDO.setCorrelationId(userReq.getCorrelationId());
+
+        // 当密码不为空，进行密码修改
+        if (userReq.getPassword() != null) {
+            try {
+                byte[] salt = AESEncryptionUtil.generateSalt(userDO.getName());
+                userDO.setSalt(AESEncryptionUtil.getStringFromBytes(salt));
+                userDO.setPassword(AESEncryptionUtil.encrypt(userReq.getPassword(), salt));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        userRepository.modifyTheUser(userDO);
+    }
+
+    @Override
+    public int deleteTheUser(String correlationId) {
+        UserRepository userRepository = ContextUtils.getBean(UserRepository.class);
+        return userRepository.deleteTheUser(correlationId);
+    }
+
     private UserTokenDO saveUserToken(String tokenName, String userName, String token,
                                       long expireTime) {
         UserTokenDO userTokenDO = new UserTokenDO();

@@ -24,4 +24,8 @@ public interface UserRepository {
     void deleteUserTokenByName(String userName);
 
     void deleteUserToken(Long tokenId);
+
+    void modifyTheUser(UserDO userDO);
+
+    int deleteTheUser(String correlationId);
 }

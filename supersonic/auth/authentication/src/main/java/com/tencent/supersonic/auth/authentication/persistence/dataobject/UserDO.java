@@ -21,6 +21,8 @@ public class UserDO {
     /** */
     private Integer isAdmin;
 
+    private String correlationId;
+
     /** @return id */
     public Long getId() {
         return id;
@@ -87,5 +89,13 @@ public class UserDO {
     /** @param isAdmin */
     public void setIsAdmin(Integer isAdmin) {
         this.isAdmin = isAdmin;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
     }
 }

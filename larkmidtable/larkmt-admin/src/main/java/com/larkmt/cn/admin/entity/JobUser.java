@@ -18,6 +18,9 @@ public class JobUser {
     @ApiModelProperty("权限：执行器ID列表，多个逗号分割")
     private String permission;
 
+    @ApiModelProperty("关联id")
+    private String correlationId;
+
     public int getId() {
         return id;
     }
@@ -56,6 +59,14 @@ public class JobUser {
 
     public void setPermission(String permission) {
         this.permission = permission;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
     }
 
     // plugin

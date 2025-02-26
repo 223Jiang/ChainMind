@@ -42,4 +42,8 @@ public interface UserService {
     UserToken getUserToken(Long id);
 
     void deleteUserToken(Long id);
+
+    void modifyTheUser(UserReq userReq);
+
+    int deleteTheUser(String correlationId);
 }

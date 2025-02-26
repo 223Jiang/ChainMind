@@ -12,13 +12,14 @@ import com.tencent.supersonic.auth.authentication.utils.ComponentFactory;
 import com.tencent.supersonic.common.config.SystemConfig;
 import com.tencent.supersonic.common.pojo.User;
 import com.tencent.supersonic.common.service.SystemConfigService;
+import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Set;
 
-@Service
+@DubboService
 public class UserServiceImpl implements UserService {
 
     private SystemConfigService sysParameterService;
@@ -109,5 +110,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUserToken(Long id) {
         ComponentFactory.getUserAdaptor().deleteUserToken(id);
+    }
+
+    @Override
+    public void modifyTheUser(UserReq userReq) {
+        ComponentFactory.getUserAdaptor().modifyTheUser(userReq);
+    }
+
+    @Override
+    public int deleteTheUser(String correlationId) {
+        return ComponentFactory.getUserAdaptor().deleteTheUser(correlationId);
     }
 }

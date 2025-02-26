@@ -42,6 +42,11 @@
   <sql id="Base_Column_List">
     id, name, password, salt, display_name, email, is_admin
   </sql>
+
+  <delete id="deleteTheUser">
+    delete from s2_user where correlation_id = #{correlationId,jdbcType=VARCHAR}
+  </delete>
+
   <select id="selectByExample" parameterType="com.tencent.supersonic.auth.authentication.persistence.dataobject.UserDOExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
@@ -61,10 +66,10 @@
   </select>
   <insert id="insert" parameterType="com.tencent.supersonic.auth.authentication.persistence.dataobject.UserDO">
     insert into s2_user (id, name, password, salt,
-      display_name, email, is_admin
+      display_name, email, is_admin, correlation_id
       )
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR},
-      #{displayName,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{isAdmin,jdbcType=INTEGER}
+      #{displayName,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{isAdmin,jdbcType=INTEGER}, #{correlationId,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.tencent.supersonic.auth.authentication.persistence.dataobject.UserDO">
@@ -147,4 +152,19 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
+    <update id="modifyTheUser">
+      update s2_user
+      <set>
+        <if test="name != null">
+          name = #{name,jdbcType=VARCHAR},
+        </if>
+        <if test="password != null">
+          password = #{password,jdbcType=VARCHAR},
+        </if>
+        <if test="salt != null">
+          salt = #{salt,jdbcType=VARCHAR},
+        </if>
+      </set>
+      where correlation_id = #{correlationId,jdbcType=VARCHAR}
+    </update>
 </mapper>

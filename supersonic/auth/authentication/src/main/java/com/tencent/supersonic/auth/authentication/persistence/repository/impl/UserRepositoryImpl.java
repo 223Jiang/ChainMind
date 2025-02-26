@@ -76,4 +76,14 @@ public class UserRepositoryImpl implements UserRepository {
     public void deleteUserToken(Long tokenId) {
         userTokenDOMapper.deleteById(tokenId);
     }
+
+    @Override
+    public void modifyTheUser(UserDO userDO) {
+        userDOMapper.modifyTheUser(userDO);
+    }
+
+    @Override
+    public int deleteTheUser(String correlationId) {
+        return userDOMapper.deleteTheUser(correlationId);
+    }
 }

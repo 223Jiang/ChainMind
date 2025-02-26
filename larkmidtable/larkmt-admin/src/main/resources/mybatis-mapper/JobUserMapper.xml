@@ -23,7 +23,8 @@
 		t.id,
 		t.username,
 		t.role,
-		t.permission
+		t.permission,
+		t.correlation_id
 	</sql>
 
     <select id="pageList" parameterType="java.util.HashMap" resultMap="JobUser">
@@ -89,12 +90,14 @@
 			username,
 			password,
 			role,
-			permission
+			permission,
+            correlation_id
 		) VALUES (
 			#{username},
 			#{password},
 			#{role},
-			#{permission}
+			#{permission},
+            #{correlationId}
 		);
 	</insert>
 
@@ -117,5 +120,10 @@
 		FROM job_user
 		WHERE id = #{id}
 	</delete>
+    <delete id="deleteTheUser">
+        DELETE
+        FROM job_user
+        WHERE correlation_id = #{correlationId}
+    </delete>
 
 </mapper>

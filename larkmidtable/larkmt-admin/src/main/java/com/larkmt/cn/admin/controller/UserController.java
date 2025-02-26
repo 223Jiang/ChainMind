@@ -1,12 +1,18 @@
 package com.larkmt.cn.admin.controller;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.larkmt.cn.admin.core.util.I18nUtil;
 import com.larkmt.cn.admin.entity.JobUser;
 import com.larkmt.cn.admin.mapper.JobUserMapper;
+import com.larkmt.cn.admin.util.AESSupersonicUtil;
 import com.larkmt.core.biz.model.ReturnT;
+import com.tencent.supersonic.auth.api.authentication.request.UserReq;
+import com.tencent.supersonic.auth.api.authentication.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +32,7 @@ import static com.larkmt.core.biz.model.ReturnT.FAIL_CODE;
 @RestController
 @RequestMapping("/larkmidtable/api/user")
 @Api(tags = "用户信息接口")
+@Slf4j
 public class UserController {
 
     @Resource
@@ -34,13 +41,15 @@ public class UserController {
     @Resource
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @DubboReference
+    private UserService userService;
+
 
     @GetMapping("/pageList")
     @ApiOperation("用户列表")
     public ReturnT<Map<String, Object>> pageList(@RequestParam(value = "current", required = false, defaultValue = "1") int current,
                                                  @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                  @RequestParam(value = "username", required = false) String username) {
-
         // page list
         List<JobUser> list = jobUserMapper.pageList((current - 1) * size, size, username);
         int recordsTotal = jobUserMapper.pageListCount((current - 1) * size, size, username);
@@ -70,7 +79,11 @@ public class UserController {
 
     @PostMapping("/add")
     @ApiOperation("添加用户")
-    public ReturnT<String> add(@RequestBody JobUser jobUser) {
+    public ReturnT<String> add(@RequestBody JobUser jobUser) throws Exception {
+
+        // Supersonic新增账号同步
+        jobUser.setCorrelationId(IdUtil.simpleUUID());
+        userService.register(new UserReq(jobUser.getUsername(), AESSupersonicUtil.encryptPassword(jobUser.getPassword()), jobUser.getCorrelationId()));
 
         // valid username
         if (!StringUtils.hasText(jobUser.getUsername())) {
@@ -90,7 +103,6 @@ public class UserController {
         }
         jobUser.setPassword(bCryptPasswordEncoder.encode(jobUser.getPassword()));
 
-
         // check repeat
         JobUser existUser = jobUserMapper.loadByUserName(jobUser.getUsername());
         if (existUser != null) {
@@ -99,12 +111,13 @@ public class UserController {
 
         // write
         jobUserMapper.save(jobUser);
+
         return ReturnT.SUCCESS;
     }
 
     @PostMapping(value = "/update")
     @ApiOperation("更新用户信息")
-    public ReturnT<String> update(@RequestBody JobUser jobUser) {
+    public ReturnT<String> update(@RequestBody JobUser jobUser) throws Exception {
         if (StringUtils.hasText(jobUser.getPassword())) {
             String pwd = jobUser.getPassword().trim();
             if (StrUtil.isBlank(pwd)) {
@@ -114,6 +127,10 @@ public class UserController {
             if (!(pwd.length() >= 4 && pwd.length() <= 20)) {
                 return new ReturnT<>(FAIL_CODE, I18nUtil.getString("system_length_limit") + "[4-20]");
             }
+
+            // 进行Supersonic用户数据修改
+            userService.modifyTheUser(new UserReq(jobUser.getUsername(), AESSupersonicUtil.encryptPassword(pwd), jobUser.getCorrelationId()));
+
             jobUser.setPassword(bCryptPasswordEncoder.encode(pwd));
         } else {
             return new ReturnT<>(FAIL_CODE, I18nUtil.getString("system_no_blank") + "密码");
@@ -148,4 +165,17 @@ public class UserController {
         return ReturnT.SUCCESS;
     }
 
+    @RequestMapping(value = "/deleteTheUser/{correlationId}", method = RequestMethod.POST)
+    @ApiOperation("删除用户v2.0")
+    public ReturnT<String> deleteTheUser(@PathVariable String correlationId) {
+        // 进行Supersonic用户数据修改
+        int supperResult = userService.deleteTheUser(correlationId);
+        if (supperResult != 1) {
+            log.error("------------Supersonic用户数据删除失败----------------");
+            return ReturnT.FAIL;
+        }
+
+        int result = jobUserMapper.deleteTheUser(correlationId);
+        return result != 1 ? ReturnT.FAIL : ReturnT.SUCCESS;
+    }
 }
