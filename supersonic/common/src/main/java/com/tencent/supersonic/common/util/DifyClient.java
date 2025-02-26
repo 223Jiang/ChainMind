@@ -73,9 +73,9 @@ public class DifyClient {
     private Map<String, String> defaultHeaders() {
         Map<String, String> headers = new HashMap<>();
         if (difyKey.contains("Bearer")) {
-            headers.put("Authorization", difyKey);
+            headers.put("Bitoken", difyKey);
         } else {
-            headers.put("Authorization", "Bearer " + difyKey);
+            headers.put("Bitoken", "Bearer " + difyKey);
         }
 
         headers.put("Content-Type", CONTENT_TYPE_JSON);

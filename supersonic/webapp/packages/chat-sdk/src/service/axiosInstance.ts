@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(
   (config: any) => {
     const token = getToken();
     if (token && config?.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Bitoken = `Bearer ${token}`;
     }
     return config;
   },

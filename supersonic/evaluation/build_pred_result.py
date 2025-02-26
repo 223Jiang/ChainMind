@@ -22,7 +22,7 @@ def get_pred_sql(query,url,agentId,chatId,authorization,default_sql):
     url=url+"/supersonic/api/chat/query/parse"
     data = {"agentId": agentId, "chatId":chatId,"queryText":query}
     header = {}
-    header["Authorization"] =authorization
+    header["Bitoken"] =authorization
     try:
         result = requests.post(url=url, headers=header, json=data)
         #print(result.json())

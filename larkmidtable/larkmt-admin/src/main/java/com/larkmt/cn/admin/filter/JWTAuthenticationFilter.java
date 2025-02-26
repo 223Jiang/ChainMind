@@ -2,11 +2,14 @@ package com.larkmt.cn.admin.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.larkmt.cn.admin.util.AESSupersonicUtil;
 import com.larkmt.core.biz.model.ReturnT;
 import com.larkmt.cn.admin.core.util.I18nUtil;
 import com.larkmt.cn.admin.entity.JwtUser;
 import com.larkmt.cn.admin.entity.LoginUser;
 import com.larkmt.cn.admin.util.JwtTokenUtils;
+import com.tencent.supersonic.auth.api.authentication.request.UserReq;
+import com.tencent.supersonic.auth.api.authentication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,12 +33,16 @@ import static com.larkmt.core.util.Constants.SPLIT_COMMA;
 
 @Slf4j
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+    private String Bitoken;
+
+    private UserService userService;
 
     private ThreadLocal<Integer> rememberMe = new ThreadLocal<>();
     private AuthenticationManager authenticationManager;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, UserService userService) {
         this.authenticationManager = authenticationManager;
+        this.userService = userService;
         super.setFilterProcessesUrl("/larkmidtable/api/auth/login");
     }
 
@@ -47,12 +54,17 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             LoginUser loginUser = new ObjectMapper().readValue(request.getInputStream(), LoginUser.class);
             rememberMe.set(loginUser.getRememberMe());
+
+            Bitoken = userService.login(new UserReq(loginUser.getUsername(), AESSupersonicUtil.encryptPassword(loginUser.getPassword()), ""), "supersonic");
+
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword(), new ArrayList<>())
             );
         } catch (IOException e) {
             logger.error("attemptAuthentication error :{}",e);
             return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -75,6 +87,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String token = JwtTokenUtils.createToken(jwtUser.getId(),jwtUser.getUsername(), role, isRemember);
         response.setHeader("token", JwtTokenUtils.TOKEN_PREFIX + token);
+        response.setHeader("Bitoken", JwtTokenUtils.TOKEN_PREFIX + Bitoken);
         response.setCharacterEncoding("UTF-8");
         Map<String, Object> maps = new HashMap<>();
         maps.put("data", JwtTokenUtils.TOKEN_PREFIX + token);

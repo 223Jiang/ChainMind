@@ -5,6 +5,8 @@ import com.larkmt.cn.admin.filter.JWTAuthenticationFilter;
 import com.larkmt.cn.admin.filter.JWTAuthorizationFilter;
 import com.larkmt.cn.admin.service.impl.UserDetailsServiceImpl;
 import com.larkmt.core.util.Constants;
+import com.tencent.supersonic.auth.api.authentication.service.UserService;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -31,6 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Resource
     private UserDetailsService userDetailsService;
+
+    @DubboReference
+    private UserService userService;
 
     @Bean
     UserDetailsService customUserService() { //注册UserDetailsService 的bean
@@ -71,7 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 // 添加自定义的JWT认证和授权过滤器，用于处理身份验证和授权
-                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                .addFilter(new JWTAuthenticationFilter(authenticationManager(), userService))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager()))
                 // 配置会话管理策略，声明应用是无状态的，不会创建或使用会话
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

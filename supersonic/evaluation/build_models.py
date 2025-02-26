@@ -25,7 +25,7 @@ def get_url_pre():
 def get_list(url):
     authorization=get_authorization()
     header = {}
-    header["Authorization"] =authorization
+    header["Bitoken"] =authorization
     resp=requests.get(url=url, headers=header)
     json_data=resp.json()
     if json_data["code"]==200:
@@ -53,7 +53,7 @@ def build_domain():
         url=get_url_pre()+"/supersonic/api/semantic/domain/createDomain"
         authorization=get_authorization()
         header = {}
-        header["Authorization"] =authorization
+        header["Bitoken"] =authorization
         resp=requests.post(url=url, headers=header,json=json_dict)
         url=get_url_pre()+"/supersonic/api/semantic/domain/getDomainList"
         domain_list=get_list(url)

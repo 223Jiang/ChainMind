@@ -19,7 +19,7 @@ const authHeaderInterceptor = (url: string, options: RequestOptionsInit) => {
   const query = queryString.parse(history.location.search) || {};
   const token = query[TOKEN_KEY] || localStorage.getItem(TOKEN_KEY);
   if (token) {
-    headers.Authorization = `Bearer ${token}`;
+    headers.Bitoken = `Bearer ${token}`;
     headers.auth = `Bearer ${token}`;
     localStorage.setItem(TOKEN_KEY, token);
   }

@@ -31,7 +31,7 @@ class BatchTest:
             'chatId': self.chatId,
         }
         headers = {
-            'Authorization': 'Bearer ' + self.auth_token,
+            'Bitoken': 'Bearer ' + self.auth_token,
             'Content-Type': 'application/json',
         }
 
@@ -48,7 +48,7 @@ class BatchTest:
             'queryId': queryId,
         }
         headers = {
-            'Authorization': 'Bearer ' + self.auth_token,
+            'Bitoken': 'Bearer ' + self.auth_token,
             'Content-Type': 'application/json',
         }
 
