@@ -158,6 +158,9 @@ public class FlinkxJsonHelper implements FlinkxJsonInterface {
         } else if (JdbcConstants.MONGODB.equals(datasource)) {
             readerPlugin = new MongoDBReader();
             buildReader = buildMongoDBReader();
+        } else if (JdbcConstants.OPENGAUSS.equals(datasource)) {
+            readerPlugin = new OpenGaussReader();
+            buildReader = buildReader();
         }
     }
 
@@ -199,6 +202,9 @@ public class FlinkxJsonHelper implements FlinkxJsonInterface {
         } else if (JdbcConstants.MONGODB.equals(datasource)) {
             writerPlugin = new MongoDBWriter();
             buildWriter = this.buildMongoDBWriter();
+        } else if (JdbcConstants.OPENGAUSS.equals(datasource)) {
+            writerPlugin = new OpenGaussWriter();
+            buildWriter = this.buildWriter();
         }
     }
 

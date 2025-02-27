@@ -125,4 +125,8 @@ public interface JdbcConstants {
     String HBASE20XSQL = "hbase20xsql";
     String HBASE20XSQL_DRIVER = "org.apache.phoenix.jdbc.PhoenixDriver";
 
+    // openGauss配置（适配22.04 LTS）
+    String OPENGAUSS                  = "opengauss";
+    String OPENGAUSS_DRIVER           = "org.opengauss.Driver";
+
 }

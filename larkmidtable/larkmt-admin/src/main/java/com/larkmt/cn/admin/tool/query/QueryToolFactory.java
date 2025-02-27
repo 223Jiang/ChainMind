@@ -35,6 +35,8 @@ public class QueryToolFactory {
             return getHbase20XsqlQueryToolQueryToolInstance(jobDatasource);
         } else if (JdbcConstants.HANA.equals(datasource)) {
             return getHanaQueryToolInstance(jobDatasource);
+        } else if (JdbcConstants.OPENGAUSS.equals(datasource)) {
+            return getOpenGaussQueryToolInstance(jobDatasource);
         }
         throw new UnsupportedOperationException("找不到该类型: ".concat(datasource));
     }
@@ -104,6 +106,16 @@ public class QueryToolFactory {
             return new Hbase20XsqlQueryTool(jdbcDatasource);
         } catch (SQLException e) {
             throw RdbmsException.asConnException(JdbcConstants.HBASE20XSQL,
+                    e, jdbcDatasource.getJdbcUsername(), jdbcDatasource.getDatasourceName());
+        }
+    }
+
+    // 添加openGauss实例化方法
+    private static BaseQueryTool getOpenGaussQueryToolInstance(JobDatasource jdbcDatasource) {
+        try {
+            return new OpenGaussQueryTool(jdbcDatasource);
+        } catch (SQLException e) {
+            throw RdbmsException.asConnException(JdbcConstants.OPENGAUSS,
                     e, jdbcDatasource.getJdbcUsername(), jdbcDatasource.getDatasourceName());
         }
     }
