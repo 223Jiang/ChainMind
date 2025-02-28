@@ -158,7 +158,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+        <dependency>
+            <groupId>org.opengauss</groupId>
+            <artifactId>opengauss-jdbc</artifactId>
+            <version>3.0.0</version> <!-- 官方推荐22.04.x系列使用3.0.0驱动 -->
+        </dependency>
     </dependencies>
 
 </project>

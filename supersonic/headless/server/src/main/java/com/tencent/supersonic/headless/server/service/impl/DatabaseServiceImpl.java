@@ -149,37 +149,54 @@ public class DatabaseServiceImpl extends ServiceImpl<DatabaseDOMapper, DatabaseD
         return queryWithColumns(sql, DatabaseConverter.convert(databaseResp));
     }
 
+    /**
+     * 获取指定用户关联的所有数据库的参数配置。
+     * 该方法首先获取用户可访问的数据库列表，然后构建一个包含每种数据库类型的参数配置的映射。
+     * 对于已知的数据库类型，直接使用预定义的参数构建器；对于未知的数据库类型，则使用默认的参数构建器。
+     * 最后，将OTHER类型的数据库参数添加到结果映射的末尾。
+     *
+     * @param user 用户对象，表示请求者。
+     * @return 返回一个映射，其中键是数据库类型，值是该类型的数据库参数列表。
+     */
     @Override
     public Map<String, List<DatabaseParameter>> getDatabaseParameters(User user) {
+        // 获取用户可访问的数据库列表
         List<DatabaseResp> databaseList = getDatabaseList(user);
 
+        // 获取所有已知数据库类型的参数构建器映射
         Map<String, DbParametersBuilder> parametersBuilderMap = DbParameterFactory.getMap();
+        // 初始化结果映射以存储数据库参数
         Map<String, List<DatabaseParameter>> result = new LinkedHashMap<>();
 
-        // Add all known database parameters
+        // 添加所有已知数据库类型的参数
         for (Map.Entry<String, DbParametersBuilder> entry : parametersBuilderMap.entrySet()) {
+            // 排除OTHER类型的数据库参数，因为它们将在最后添加
             if (!entry.getKey().equals(EngineType.OTHER.getName())) {
                 result.put(entry.getKey(), entry.getValue().build());
             }
         }
-        // Add default parameters for unknown databases
+        // 为未知数据库类型添加默认参数
         if (!CollectionUtils.isEmpty(databaseList)) {
+            // 从数据库列表中提取数据库类型列表
             List<String> databaseTypeList = databaseList.stream()
                     .map(databaseResp -> databaseResp.getType()).collect(Collectors.toList());
+            // 创建默认数据库参数的构建器
             DefaultParametersBuilder defaultParametersBuilder = new DefaultParametersBuilder();
+            // 对于每个数据库类型，如果它不在已知参数构建器映射中，则添加默认参数
             for (String dbType : databaseTypeList) {
                 if (!parametersBuilderMap.containsKey(dbType)) {
                     result.put(dbType, defaultParametersBuilder.build());
                 }
             }
         }
-        // Add the OTHER type at the end
+        // 在最后添加OTHER类型的参数
         if (parametersBuilderMap.containsKey(EngineType.OTHER.getName())) {
             result.put(EngineType.OTHER.getName(),
                     parametersBuilderMap.get(EngineType.OTHER.getName()).build());
         }
         return result;
     }
+
 
     private SemanticQueryResp queryWithColumns(String sql, Database database) {
         SemanticQueryResp queryResultWithColumns = new SemanticQueryResp();

@@ -6,7 +6,6 @@ import com.larkmt.cn.admin.entity.JobDatasource;
 import com.larkmt.cn.admin.service.FlinkxJsonService;
 import com.larkmt.cn.admin.service.JobDatasourceService;
 import com.larkmt.cn.admin.tool.flinkx.FlinkxJsonHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

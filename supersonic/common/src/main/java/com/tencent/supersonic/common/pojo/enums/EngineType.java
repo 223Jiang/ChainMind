@@ -8,6 +8,8 @@ public enum EngineType {
     KAFKA(4, "kafka"),
     H2(5, "h2"),
     POSTGRESQL(6, "postgresql"),
+    OPENGAUSS(8, "opengauss"),  // 新增OpenGauss类型
+
     OTHER(7, "other");
 
     private Integer code;

@@ -39,21 +39,36 @@ public class JdbcDataSourceUtils {
         this.jdbcDataSource = jdbcDataSource;
     }
 
+    /**
+     * 测试数据库连接
+     * 此方法旨在验证给定数据库信息是否能够成功建立连接
+     * 它首先尝试根据数据库URL加载正确的数据库驱动类，
+     * 然后尝试使用提供的URL、用户名和密码建立数据库连接
+     *
+     * @param database 数据库对象，包含连接数据库所需的信息
+     * @return 如果成功建立数据库连接，则返回true；否则返回false
+     */
     public static boolean testDatabase(Database database) {
-
+        // 加载数据库驱动类
         try {
             Class.forName(getDriverClassName(database.getUrl()));
         } catch (ClassNotFoundException e) {
+            // 如果驱动类未找到，则记录错误并返回false
             log.error(e.toString(), e);
             return false;
         }
+
+        // 尝试建立数据库连接
         try (Connection con = DriverManager.getConnection(database.getUrl(), database.getUsername(),
                 database.passwordDecrypt())) {
+            // 如果连接成功，则返回true
             return con != null;
         } catch (SQLException e) {
+            // 如果连接失败，则记录错误并返回false
             log.error(e.toString(), e);
         }
 
+        // 如果上述步骤均未返回，则返回false
         return false;
     }
 
@@ -106,25 +121,39 @@ public class JdbcDataSourceUtils {
         return dataSourceName;
     }
 
+    /**
+     * 根据JDBC URL获取数据库驱动类名
+     *
+     * @param jdbcUrl 数据库的JDBC URL
+     * @return 数据库驱动类名
+     * @throws RuntimeException 如果不支持的数据类型抛出运行时异常
+     */
     public static String getDriverClassName(String jdbcUrl) {
-
+        // 初始化数据库驱动类名为null
         String className = null;
 
         try {
+            // 尝试通过JDBC URL获取数据库驱动，并获取其类名
             className = DriverManager.getDriver(jdbcUrl.trim()).getClass().getName();
         } catch (SQLException e) {
+            // 如果发生SQL异常，记录错误日志
             log.error("e", e);
         }
 
+        // 检查获取到的数据库驱动类名是否为空或代理类
         if (!StringUtils.isEmpty(className) && !className.contains("com.sun.proxy")
                 && !className.contains("net.sf.cglib.proxy")) {
+            // 如果不是代理类，直接返回数据库驱动类名
             return className;
         }
 
+        // 尝试通过JDBC URL获取数据类型枚举
         DataType dataTypeEnum = DataType.urlOf(jdbcUrl);
         if (dataTypeEnum != null) {
+            // 如果数据类型枚举不为空，返回对应的数据类型驱动类名
             return dataTypeEnum.getDriver();
         }
+        // 如果数据类型不支持，抛出运行时异常
         throw new RuntimeException("Not supported data type: jdbcUrl=" + jdbcUrl);
     }
 

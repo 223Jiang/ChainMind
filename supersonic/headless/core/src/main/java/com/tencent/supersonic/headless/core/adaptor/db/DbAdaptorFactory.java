@@ -15,6 +15,8 @@ public class DbAdaptorFactory {
         dbAdaptorMap.put(EngineType.MYSQL.getName(), new MysqlAdaptor());
         dbAdaptorMap.put(EngineType.H2.getName(), new H2Adaptor());
         dbAdaptorMap.put(EngineType.POSTGRESQL.getName(), new PostgresqlAdaptor());
+        // 在DbAdaptorFactory的static块中添加
+        dbAdaptorMap.put(EngineType.OPENGAUSS.getName(), new OpenGaussAdaptor());
         dbAdaptorMap.put(EngineType.OTHER.getName(), new DefaultDbAdaptor());
     }
 
