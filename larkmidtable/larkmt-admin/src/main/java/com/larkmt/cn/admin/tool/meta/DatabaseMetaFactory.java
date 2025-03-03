@@ -31,7 +31,8 @@ public class DatabaseMetaFactory {
         } else if(JdbcConstants.HANA.equals(dbType)) {
             return HanaDatabaseMeta.getInstance();
         } else if (JdbcConstants.OPENGAUSS.equals(dbType)) {
-            return new PostgresqlDatabaseMeta(); // 使用PostgreSQL元数据（兼容openGauss）
+            // 使用PostgreSQL元数据（兼容openGauss）
+            return new PostgresqlDatabaseMeta();
         } else {
             throw new UnsupportedOperationException("暂不支持的类型：".concat(dbType));
         }

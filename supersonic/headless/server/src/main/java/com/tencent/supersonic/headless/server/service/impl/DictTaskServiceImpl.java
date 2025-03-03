@@ -99,32 +99,51 @@ public class DictTaskServiceImpl implements DictTaskService {
         return null;
     }
 
+    /**
+     * 执行字典数据处理任务
+     *
+     * @param dictItemResp 字典项响应对象（包含字典ID、文件名等元数据）
+     * @param user         任务执行用户对象（用于权限/操作人记录）
+     * 处理流程：
+     * 1. 校验输入参数有效性
+     * 2. 更新任务状态为执行中
+     * 3. 三阶段处理：
+     *    - 生成字典数据
+     *    - 持久化到字典文件
+     *    - 实时更新内存字典
+     * 4. 处理结果状态回写
+     */
     private void runDictTask(DictItemResp dictItemResp, User user) {
+        // 参数有效性校验
         if (Objects.isNull(dictItemResp)) {
             return;
         }
 
+        /* 更新任务状态为执行中 */
         DictTaskDO dictTaskDO = dictRepository.queryDictTaskById(dictItemResp.getId());
         dictTaskDO.setStatus(TaskStatusEnum.RUNNING.getStatus());
         dictRepository.editDictTask(dictTaskDO);
 
-        // 1.Generate item dictionary data
+        // 阶段1：生成字典数据集合
         List<String> data = dictUtils.fetchItemValue(dictItemResp);
 
-        // 2.Change dictionary file
+        // 阶段2：写入字典文件（格式：文件名.扩展名）
         String fileName = dictItemResp.fetchDictFileName() + Constants.DOT + dictFileType;
         fileHandler.writeFile(data, fileName, false);
 
-        // 3.Change in-memory dictionary data in real time
+        // 阶段3：内存字典热更新
         try {
             dictWordService.loadDictWord();
 
+            /* 任务成功状态更新 */
             dictTaskDO.setStatus(TaskStatusEnum.SUCCESS.getStatus());
             dictRepository.editDictTask(dictTaskDO);
         } catch (Exception e) {
             log.error("reloadCustomDictionary error", e);
+            // 注：异常时保持运行中状态，需外部监控处理
         }
     }
+
 
     @Override
     public Long deleteDictTask(DictSingleTaskReq taskReq, User user) {

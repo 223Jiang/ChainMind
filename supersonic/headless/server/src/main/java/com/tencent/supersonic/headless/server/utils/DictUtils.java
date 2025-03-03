@@ -170,24 +170,38 @@ public class DictUtils {
         return dictItemResp;
     }
 
+    /**
+     * 根据字典项配置获取维度值列表
+     *
+     * @param dictItemResp 字典项配置响应对象，包含业务名称、属性等元数据
+     * @return 经过处理的维度值列表，包含合并后的多值项和白名单值
+     */
     public List<String> fetchItemValue(DictItemResp dictItemResp) {
         List<String> lines = new ArrayList<>();
+        // 构造语义查询请求对象并设置认证参数
         SemanticQueryReq semanticQueryReq = constructQueryReq(dictItemResp);
         semanticQueryReq.setNeedAuth(false);
         String bizName = dictItemResp.getBizName();
+
         try {
+            // 执行语义查询并处理空结果情况
             SemanticQueryResp semanticQueryResp = queryService.queryByReq(semanticQueryReq, null);
             if (Objects.isNull(semanticQueryResp)
                     || CollectionUtils.isEmpty(semanticQueryResp.getResultList())) {
                 return lines;
             }
+
+            // 构建维度值与频次的映射表（初始容量2000）
             Map<String, Long> valueAndFrequencyPair = new HashMap<>(2000);
             for (Map<String, Object> line : semanticQueryResp.getResultList()) {
 
+                // 过滤无效数据行：空行/缺少业务字段/值缺失/列数不符
                 if (CollectionUtils.isEmpty(line) || !line.containsKey(bizName)
                         || line.get(bizName) == null || line.size() != 2) {
                     continue;
                 }
+
+                // 提取维度值和指标数值
                 String dimValue = line.get(bizName).toString();
                 Object metricObject = null;
                 for (String key : line.keySet()) {
@@ -195,19 +209,27 @@ public class DictUtils {
                         metricObject = line.get(key);
                     }
                 }
+
+                // 合并多值维度项（当维度对应多个指标值时）
                 if (!StringUtils.isEmpty(dimValue) && Objects.nonNull(metricObject)) {
                     Long metric = Math.round(Double.parseDouble(metricObject.toString()));
                     mergeMultivaluedValue(valueAndFrequencyPair, dimValue, metric);
                 }
             }
+
+            // 根据字典项属性构建最终结果行
             String nature = dictItemResp.getNature();
             constructDictLines(valueAndFrequencyPair, lines, nature);
+
+            // 追加白名单特殊值
             addWhiteValueLines(dictItemResp, lines, nature);
         } catch (Exception e) {
+            // 记录字典项处理异常日志
             log.error("dictItemResp:{},fetchItemValue error:", dictItemResp, e);
         }
         return lines;
     }
+
 
     private void addWhiteValueLines(DictItemResp dictItemResp, List<String> lines, String nature) {
         if (Objects.isNull(dictItemResp) || Objects.isNull(dictItemResp.getConfig())
@@ -258,13 +280,23 @@ public class DictUtils {
         }
     }
 
+    /**
+     * 构造语义查询请求对象
+     *
+     * @param dictItemResp 字典项响应对象，包含字典项类型和详细信息
+     * @return 当类型为维度时返回构造的查询请求，其他类型返回null
+     */
     private SemanticQueryReq constructQueryReq(DictItemResp dictItemResp) {
+        // 仅处理维度类型的字典项
         if (TypeEnums.DIMENSION.equals(dictItemResp.getType())) {
             return constructDimQueryReq(dictItemResp);
         }
+
+        // 非维度类型记录警告日志
         log.warn("constructQueryReq failed");
         return null;
     }
+
 
     private QuerySqlReq constructTagQueryReq(DictItemResp dictItemResp) {
 

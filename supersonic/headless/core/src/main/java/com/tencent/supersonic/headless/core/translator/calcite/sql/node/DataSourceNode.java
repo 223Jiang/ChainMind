@@ -40,12 +40,23 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DataSourceNode extends SemanticNode {
 
+    /**
+     * 根据数据源配置构建SQL抽象语法树节点
+     *
+     * @param datasource 数据源配置对象，包含SQL查询/表查询、数据库类型等信息
+     * @param scope SQL验证作用域，用于上下文验证和解析
+     * @return SqlNode 生成的SQL抽象语法树节点
+     * @throws Exception 当无法构建有效的SQL语句时抛出异常
+     */
     public static SqlNode build(DataSource datasource, SqlValidatorScope scope) throws Exception {
         String sqlTable = "";
+
+        // 优先使用自定义SQL查询，若不存在则处理表名查询
         if (datasource.getSqlQuery() != null && !datasource.getSqlQuery().isEmpty()) {
             sqlTable = datasource.getSqlQuery();
         } else if (datasource.getTableQuery() != null && !datasource.getTableQuery().isEmpty()) {
-            if (datasource.getType().equalsIgnoreCase(EngineType.POSTGRESQL.getName())) {
+            // 处理PostgreSQL系列数据库的schema路径问题
+            if (datasource.getType().equalsIgnoreCase(EngineType.POSTGRESQL.getName()) || datasource.getType().equalsIgnoreCase(EngineType.OPENGAUSS.getName())) {
                 String fullTableName = Arrays.stream(datasource.getTableQuery().split("\\."))
                         .collect(Collectors.joining(".public."));
                 sqlTable = "select * from " + fullTableName;
@@ -53,13 +64,19 @@ public class DataSourceNode extends SemanticNode {
                 sqlTable = "select * from " + datasource.getTableQuery();
             }
         }
+
+        // 校验必须存在有效SQL语句
         if (sqlTable.isEmpty()) {
             throw new Exception("DatasourceNode build error [tableSqlNode not found]");
         }
+
+        // 构建基础表结构并添加schema信息
         SqlNode source = getTable(sqlTable, scope, EngineType.fromString(datasource.getType()));
         addSchema(scope, datasource, sqlTable);
+
         return buildAs(datasource.getName(), source);
     }
+
 
     private static void addSchema(SqlValidatorScope scope, DataSource datasource, String table)
             throws Exception {

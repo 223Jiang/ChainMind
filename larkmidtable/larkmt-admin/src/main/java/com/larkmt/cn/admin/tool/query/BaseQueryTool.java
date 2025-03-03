@@ -90,7 +90,8 @@ public abstract class BaseQueryTool implements QueryToolInterface {
         String DBtype = jobDatasource.getDatasource();
         if (jdbcUrl != null && jdbcUrl.startsWith("jdbc:jtds")) {
             JtdsDataSource jtdsDataSource = new JtdsDataSource();
-            String cleanURI = jdbcUrl.substring(10);//"jdbc:jtds:".length()
+            //"jdbc:jtds:".length()
+            String cleanURI = jdbcUrl.substring(10);
             URI uri = URI.create(cleanURI);
             String serverName = uri.getHost();
             int port = uri.getPort();

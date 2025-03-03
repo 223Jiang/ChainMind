@@ -27,11 +27,27 @@ public class FlinkxJsonServiceImpl implements FlinkxJsonService {
         FlinkxJsonHelper flinkxJsonHelper = new FlinkxJsonHelper();
         // reader
         JobDatasource readerDatasource = jobJdbcDatasourceService.getById(FlinkXJsonBuildDto.getReaderDatasourceId());
+        buildJobJson(readerDatasource);
         flinkxJsonHelper.initReader(FlinkXJsonBuildDto, readerDatasource);
         // writer
         JobDatasource writerDatasource = jobJdbcDatasourceService.getById(FlinkXJsonBuildDto.getWriterDatasourceId());
+        buildJobJson(writerDatasource);
         flinkxJsonHelper.initWriter(FlinkXJsonBuildDto, writerDatasource);
 
         return JSON.toJSONString(flinkxJsonHelper.buildJob());
+    }
+
+    /**
+     * 将opengauss进行postgresql适配
+     */
+    public JobDatasource buildJobJson(JobDatasource jobDatasource) {
+        if (jobDatasource.getDatasource().equals("opengauss")) {
+            jobDatasource.setDatasource("postgresql");
+            jobDatasource.setDatabaseName("postgresql");
+            jobDatasource.setJdbcUrl(jobDatasource.getJdbcUrl().replace("opengauss", "postgresql"));
+            jobDatasource.setJdbcDriverClass("org.postgresql.Driver");
+        }
+
+        return jobDatasource;
     }
 }
