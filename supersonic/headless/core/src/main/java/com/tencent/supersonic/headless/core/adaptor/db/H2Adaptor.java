@@ -45,6 +45,7 @@ public class H2Adaptor extends BaseDbAdaptor {
         return metaData.getTables(schemaName, null, null, new String[] {"TABLE", "VIEW"});
     }
 
+    @Override
     public List<DBColumn> getColumns(ConnectInfo connectInfo, String schemaName, String tableName)
             throws SQLException {
         List<DBColumn> dbColumns = Lists.newArrayList();
