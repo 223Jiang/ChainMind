@@ -35,6 +35,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.rmi.ServerException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -131,22 +132,108 @@ public class DatabaseServiceImpl extends ServiceImpl<DatabaseDOMapper, DatabaseD
         return databaseResp;
     }
 
+    /**
+     * 执行SQL查询
+     *
+     * 本方法接收一个SQL执行请求、一个数据库ID和一个用户对象，然后执行SQL查询并返回结果
+     * 它首先根据ID获取数据库信息，检查数据库是否存在，然后检查用户是否有权限在该数据库上执行查询
+     * 最后，解析并执行SQL语句，返回查询结果
+     *
+     * @param sqlExecuteReq SQL执行请求，包含需要执行的SQL语句和可能的SQL变量
+     * @param id 数据库ID，用于识别用户所查询的特定数据库
+     * @param user 用户对象，用于权限检查
+     * @return 返回一个SemanticQueryResp对象，包含查询结果
+     */
     @Override
     public SemanticQueryResp executeSql(SqlExecuteReq sqlExecuteReq, Long id, User user) {
+        // 根据数据库ID获取数据库信息
         DatabaseResp databaseResp = getDatabase(id);
+        // 如果数据库不存在，返回一个空的查询响应对象
         if (databaseResp == null) {
             return new SemanticQueryResp();
         }
+        // 检查用户是否有权限在指定数据库上执行查询
         checkPermission(databaseResp, user);
+        // 获取SQL执行请求中的SQL语句
         String sql = sqlExecuteReq.getSql();
+        // 解析SQL语句中的变量，如果有的话
         sql = SqlVariableParseUtils.parse(sql, sqlExecuteReq.getSqlVariables(),
                 Lists.newArrayList());
+        // 执行解析后的SQL语句，并返回查询结果
         return executeSql(sql, databaseResp);
+    }
+
+    /**
+     * 执行表相关sql语句操作
+     * @param sqlExecuteReq SQL执行请求
+     * @param id            数据库实例id
+     * @param user          用户id
+     */
+    @Override
+    public void executeTableSql(SqlExecuteReq sqlExecuteReq, Long id, User user) {
+        // 根据数据库ID获取数据库信息
+        DatabaseResp databaseResp = getDatabase(id);
+        // 如果数据库不存在
+        if (databaseResp == null) {
+            return;
+        }
+        // 检查用户是否有权限在指定数据库上执行查询
+        checkPermission(databaseResp, user);
+        // 获取SQL执行请求中的SQL语句
+        String sql = sqlExecuteReq.getSqlNull();
+        // 执行解析后的SQL语句
+        executeTableSql(sql, databaseResp);
+    }
+
+    @Override
+    public void executeSaveSql(SqlExecuteReq sqlExecuteReq, List<Object[]> batchArgs, Long id, User user) {
+        // 根据数据库ID获取数据库信息
+        DatabaseResp databaseResp = getDatabase(id);
+        // 如果数据库不存在
+        if (databaseResp == null) {
+            return;
+        }
+        // 检查用户是否有权限在指定数据库上执行查询
+        checkPermission(databaseResp, user);
+        // 获取SQL执行请求中的SQL语句
+        String sql = sqlExecuteReq.getSqlNull();
+        // 执行解析后的SQL语句
+        executeSaveSql(sql, batchArgs, databaseResp);
     }
 
     @Override
     public SemanticQueryResp executeSql(String sql, DatabaseResp databaseResp) {
         return queryWithColumns(sql, DatabaseConverter.convert(databaseResp));
+    }
+
+    public void executeTableSql(String sql, DatabaseResp databaseResp) {
+        // 初始化SqlUtils对象，以便使用数据库特定的配置进行SQL解析和执行
+        SqlUtils sqlUtils = this.sqlUtils.init(DatabaseConverter.convert(databaseResp));
+
+        // 记录执行的SQL建表语句，以便于调试和审计
+        log.info("create table SQL: {}", sql);
+
+        // 使用SqlUtils对象执行内部查询，并将结果存储在queryResultWithColumns中
+        try {
+            sqlUtils.executeCreateTable(sql);
+        } catch (ServerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void executeSaveSql(String sql , List<Object[]> batchArgs, DatabaseResp databaseResp) {
+        // 初始化SqlUtils对象，以便使用数据库特定的配置进行SQL解析和执行
+        SqlUtils sqlUtils = this.sqlUtils.init(DatabaseConverter.convert(databaseResp));
+
+        // 记录执行的SQL建表语句，以便于调试和审计
+        log.info("batch update SQL: {}, \nbatchArgs: {}", sql, batchArgs);
+
+        // 使用SqlUtils对象执行内部查询，并将结果存储在queryResultWithColumns中
+        try {
+            sqlUtils.executeBatchUpdate(sql, batchArgs);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -196,11 +283,27 @@ public class DatabaseServiceImpl extends ServiceImpl<DatabaseDOMapper, DatabaseD
     }
 
 
+    /**
+     * 根据提供的SQL查询语句和数据库对象，执行查询并返回包含列信息的查询结果
+     *
+     * @param sql SQL查询语句，用于从数据库中获取数据
+     * @param database 数据库对象，包含执行查询所需的信息
+     * @return SemanticQueryResp 包含查询结果和列信息的对象
+     */
     private SemanticQueryResp queryWithColumns(String sql, Database database) {
+        // 创建一个空的SemanticQueryResp对象来存储查询结果
         SemanticQueryResp queryResultWithColumns = new SemanticQueryResp();
+
+        // 初始化SqlUtils对象，以便使用数据库特定的配置进行SQL解析和执行
         SqlUtils sqlUtils = this.sqlUtils.init(database);
+
+        // 记录执行的SQL查询语句，以便于调试和审计
         log.info("query SQL: {}", sql);
+
+        // 使用SqlUtils对象执行内部查询，并将结果存储在queryResultWithColumns中
         sqlUtils.queryInternal(sql, queryResultWithColumns);
+
+        // 返回填充了查询结果和列信息的SemanticQueryResp对象
         return queryResultWithColumns;
     }
 

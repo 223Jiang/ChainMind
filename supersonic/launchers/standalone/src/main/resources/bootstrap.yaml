@@ -43,3 +43,10 @@ swagger:
     email:
     url: ''
   version: 3.0
+
+# 文件配置
+file:
+  # 上传路径
+  upload-dir: D:/temporary
+  # 文件上传大小
+  max-size: 10485760

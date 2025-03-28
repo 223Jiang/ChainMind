@@ -13,11 +13,31 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author JiangWeiWei
+ */
 public interface DatabaseService {
 
     SemanticQueryResp executeSql(String sql, DatabaseResp databaseResp);
 
     SemanticQueryResp executeSql(SqlExecuteReq sqlExecuteReq, Long id, User user);
+
+    /**
+     * 执行表相关sql语句操作
+     * @param sqlExecuteReq SQL执行请求
+     * @param id            数据库实例id
+     * @param user          用户id
+     */
+    void executeTableSql(SqlExecuteReq sqlExecuteReq, Long id, User user);
+
+    /**
+     * 执行批量添加sql语句操作
+     * @param sqlExecuteReq SQL执行请求
+     * @param batchArgs     插入数据集
+     * @param id            数据库实例id
+     * @param user          用户id
+     */
+    void executeSaveSql(SqlExecuteReq sqlExecuteReq, List<Object[]> batchArgs, Long id, User user);
 
     DatabaseResp getDatabase(Long id, User user);
 

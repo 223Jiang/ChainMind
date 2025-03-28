@@ -1,5 +1,6 @@
 package com.tencent.supersonic.chat.server.rest;
 
+import com.tencent.supersonic.chat.server.service.ExcelService;
 import com.tencent.supersonic.auth.api.authentication.utils.UserHolder;
 import com.tencent.supersonic.chat.api.pojo.request.ChatExecuteReq;
 import com.tencent.supersonic.chat.api.pojo.request.ChatParseReq;
@@ -13,11 +14,9 @@ import com.tencent.supersonic.headless.api.pojo.request.DimensionValueReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -31,6 +30,9 @@ public class ChatQueryController {
 
     @Autowired
     private ChatQueryService chatQueryService;
+
+    @Resource
+    private ExcelService excelService;
 
     @PostMapping("search")
     public Object search(@RequestBody ChatParseReq chatParseReq, HttpServletRequest request,
@@ -96,4 +98,6 @@ public class ChatQueryController {
         return chatQueryService.queryDimensionValue(dimensionValueReq,
                 UserHolder.findUser(request, response));
     }
+
+
 }
