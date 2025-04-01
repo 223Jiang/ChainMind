@@ -81,14 +81,30 @@ public class ChatManageServiceImpl implements ChatManageService {
         return chatRepository.deleteChat(chatId, userName);
     }
 
+    /**
+     * 根据查询条件和聊天ID查询信息
+     * 此方法用于处理基于特定查询条件和聊天ID的信息检索它首先从数据库中获取匹配的查询结果，
+     * 如果结果列表为空，则直接返回结果页如果结果列表不为空，则进一步填充解析信息后返回
+     *
+     * @param pageQueryInfoReq 包含查询条件的请求对象，用于指定查询的条件和分页信息
+     * @param chatId 聊天ID，用于指定查询的聊天上下文
+     * @return 返回包含查询结果的PageInfo对象，其中包含根据查询条件检索到的QueryResp实例列表
+     */
     @Override
     public PageInfo<QueryResp> queryInfo(PageQueryInfoReq pageQueryInfoReq, long chatId) {
+        // 从数据库中获取符合查询条件和聊天ID的查询结果
         PageInfo<QueryResp> queryRespPageInfo =
                 chatQueryRepository.getChatQuery(pageQueryInfoReq, chatId);
+
+        // 如果查询结果列表为空，则直接返回结果页
         if (CollectionUtils.isEmpty(queryRespPageInfo.getList())) {
             return queryRespPageInfo;
         }
+
+        // 填充解析信息到查询结果列表中
         fillParseInfo(queryRespPageInfo.getList());
+
+        // 返回填充了解析信息的查询结果页
         return queryRespPageInfo;
     }
 

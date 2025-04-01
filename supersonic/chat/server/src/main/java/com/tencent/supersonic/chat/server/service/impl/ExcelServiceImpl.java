@@ -12,7 +12,9 @@ import com.tencent.supersonic.headless.server.service.DatabaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,8 +24,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,7 +80,16 @@ public class ExcelServiceImpl implements ExcelService {
             // 当表不存在的时候，进行表创建
             if (tableId == null) {
                 String sql = chatQueryService.largeModelsChatter(excelFourLines);
-                sql = sql.replace("```sql", "").replace("```", "");
+
+                // 进行表名赋值
+                String preTableName = extractTableName(sql);
+                log.info("搜集表名：{}", preTableName);
+
+                tableName = preTableName + "_" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                log.info("完善后表名：{}", tableName);
+
+                sql = sql.replace("```sql", "").replace("```", "")
+                         .replace(" " + preTableName + " ", " " + tableName + " ");
                 log.info("创建表语句：\n{}", sql);
 
                 sqlExecuteReq.setSql(sql);
@@ -86,10 +101,6 @@ public class ExcelServiceImpl implements ExcelService {
                     throw new RuntimeException(e.getMessage());
                 }
 
-                // 进行表名赋值
-                tableName = extractTableName(sql);
-                log.info("搜集表名：{}", tableName);
-
                 // 进行表存储
                 TemporaryDO temporaryDO = TemporaryDO.builder()
                         .tableName(tableName).userId(user.getId())
@@ -98,11 +109,32 @@ public class ExcelServiceImpl implements ExcelService {
 
                 temporaryRepository.save(temporaryDO);
                 tableId = temporaryDO.getId();
+                log.info("生成表id：{}", temporaryDO.getId());
             } else {
                 tableName = temporaryRepository.getById(tableId).getTableName();
             }
 
             // 进行excel表数据导入
+            asyncImportData(tableId, tableName, file, sqlExecuteReq, user)
+                    .exceptionally(ex -> {
+                        log.error("异步导入失败: {}", ex.getMessage());
+                        return null;
+                    });
+            log.info("异步导入任务已提交");
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Async("asyncTaskExecutor") // 指定线程池
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+    public CompletableFuture<Void> asyncImportData(Long tableId, String tableName, MultipartFile file,
+                                                   SqlExecuteReq sqlExecuteReq, User user) {
+
+        // TODO: 需要使用锁，防止同时导入数据出现问题
+        TemporaryDO tempDO = temporaryRepository.getById(tableId);
+
+        try {
             List<List<String>> excelDataList = ExcelUtil.readExcel(file);
             String insertSql = insertDataIntoTable(tableName, excelDataList.get(0));
             log.info("生成插入sql语句：{}", insertSql);
@@ -113,17 +145,20 @@ public class ExcelServiceImpl implements ExcelService {
             }
             log.info("批量插入数据集.......");
 
-            try {
-                sqlExecuteReq.setSql(insertSql);
-                databaseService.executeSaveSql(sqlExecuteReq, batchArgs, 5L, user);
-            } catch (Exception e) {
-                log.error("导入数据失败！");
-                throw new RuntimeException("导入数据失败！");
-            }
+            sqlExecuteReq.setSql(insertSql);
+            databaseService.executeSaveSql(sqlExecuteReq, batchArgs, 5L, user);
 
-            log.info("表数据存储成功！：{}", tableName);
+            // 更新表状态为导入成功
+            tempDO.setTableStatus(0);
+            temporaryRepository.save(tempDO);
+
+            return CompletableFuture.completedFuture(null);
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            // 更新表状态为导入失败
+            tempDO.setTableStatus(3);
+            temporaryRepository.save(tempDO);
+
+            throw new CompletionException(e);
         }
     }
 

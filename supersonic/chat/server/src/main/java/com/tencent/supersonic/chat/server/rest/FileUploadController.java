@@ -31,9 +31,6 @@ public class FileUploadController {
     @Value("${file.upload-dir: D:/temporary}")
     private String uploadDir;
 
-    @Value("${file.max-size:10485760}") // 默认10MB
-    private long maxFileSize;
-
     /**
      * 文件上传
      * @param file  上传文件
@@ -72,10 +69,6 @@ public class FileUploadController {
     private void validateFile(MultipartFile file) {
         if (file.isEmpty()) {
             throw new RuntimeException("上传文件为空");
-        }
-
-        if (file.getSize() > maxFileSize) {
-            throw new RuntimeException("文件大小超过限制：" + maxFileSize + " bytes");
         }
 
         String contentType = file.getContentType();

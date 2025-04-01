@@ -24,6 +24,11 @@ spring:
         server-addr: localhost:8848
       config:
         file-extension: yaml
+  servlet:
+    # 设置上传文件大小
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 20MB
 mybatis:
   mapper-locations=classpath:mappers/custom/*.xml,classpath*:/mappers/*.xml
 
@@ -48,5 +53,3 @@ swagger:
 file:
   # 上传路径
   upload-dir: D:/temporary
-  # 文件上传大小
-  max-size: 10485760

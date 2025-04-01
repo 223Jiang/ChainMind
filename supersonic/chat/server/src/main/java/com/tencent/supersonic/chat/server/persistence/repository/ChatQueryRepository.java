@@ -37,4 +37,12 @@ public interface ChatQueryRepository {
     ChatParseDO getParseInfo(Long questionId, int parseId);
 
     List<ChatParseDO> getParseInfoList(List<Long> questionIds);
+
+    /**
+     * 根据queryIds查询多个query
+     *
+     * @param queryIds  聊天id
+     * @return          QueryResp集合
+     */
+    List<QueryResp> getChatQueries(List<Long> queryIds);
 }

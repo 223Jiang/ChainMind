@@ -1,6 +1,7 @@
 package com.tencent.supersonic.chat.server.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.tencent.supersonic.chat.server.req.vo.TemplateDictionaryVO;
 import com.tencent.supersonic.chat.server.service.AgentService;
 import com.tencent.supersonic.chat.server.service.ChatQueryService;
 import com.tencent.supersonic.chat.server.service.MemoryService;
@@ -77,6 +78,15 @@ public class AgentServiceImpl extends ServiceImpl<AgentDOMapper, AgentDO> implem
     @Override
     public void deleteAgent(Integer id) {
         removeById(id);
+    }
+
+    @Override
+    public List<TemplateDictionaryVO> templateDictionary() {
+        return list().stream().map(e -> {
+            TemplateDictionaryVO templateDictionaryVO = new TemplateDictionaryVO();
+            BeanUtils.copyProperties(e, templateDictionaryVO);
+            return templateDictionaryVO;
+        }).collect(Collectors.toList());
     }
 
     /**

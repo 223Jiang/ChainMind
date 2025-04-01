@@ -59,7 +59,7 @@ public class TemporaryDO implements Serializable {
     private String userName;
 
     /**
-     * 0-正常，1-导入中
+     * 0-正常，1-上传中，2-上传失败
      */
     @TableField(value = "table_status")
     private Integer tableStatus;

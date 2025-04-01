@@ -9,6 +9,7 @@ import com.tencent.supersonic.chat.server.persistence.dataobject.TemporaryDO;
 import com.tencent.supersonic.chat.server.persistence.repository.TemporaryRepository;
 import com.tencent.supersonic.chat.server.plugin.ExcelDataImport;
 import com.tencent.supersonic.common.pojo.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * @version V5.0.0
  * @date 2025/3/27
  */
+@Slf4j
 @RestController
 @RequestMapping("/supersonic/api/temporary")
 public class TemporaryController {
@@ -38,12 +40,16 @@ public class TemporaryController {
      * 上传Excel，生成表
      */
     @PostMapping("/excelDataImport")
-    public String excelDataImport(@RequestBody ExcelDataImport excelDataImport,
+    public Boolean excelDataImport(@RequestBody ExcelDataImport excelDataImport,
                                   HttpServletRequest request, HttpServletResponse response) {
-        User user = UserHolder.findUser(request, response);
+        try {
+            User user = UserHolder.findUser(request, response);
 
-        excelService.processExcel(excelDataImport, user);
-        return "数据导入成功";
+            excelService.processExcel(excelDataImport, user);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     /**
@@ -54,10 +60,14 @@ public class TemporaryController {
     @PostMapping("/list")
     public Page<TemporaryDO> search(@RequestBody TemporaryReq temporaryReq, HttpServletRequest request,
                                     HttpServletResponse response) {
-        User user = UserHolder.findUser(request, response);
+        try {
+            User user = UserHolder.findUser(request, response);
 
-        temporaryReq.setUserId(user.getId());
-        return temporaryRepository.search(temporaryReq);
+            temporaryReq.setUserId(user.getId());
+            return temporaryRepository.search(temporaryReq);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     /**
@@ -65,23 +75,39 @@ public class TemporaryController {
      * @param temporaryUpdateReq    更新数据
      */
     @PostMapping("/update")
-    public void update(@RequestBody TemporaryUpdateReq temporaryUpdateReq, HttpServletRequest request,
+    public Boolean update(@RequestBody TemporaryUpdateReq temporaryUpdateReq, HttpServletRequest request,
                                     HttpServletResponse response) {
-        User user = UserHolder.findUser(request, response);
+        try {
+            User user = UserHolder.findUser(request, response);
 
-        temporaryRepository.update(temporaryUpdateReq);
+            temporaryRepository.update(temporaryUpdateReq);
+
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     /**
      * 临时表删除
      * @param id    临时表id
      */
-    @PostMapping("/update/{id}")
-    public void update(@PathVariable Long id,
+    @PostMapping("/delete/{id}")
+    public Boolean delete(@PathVariable Long id,
                        HttpServletRequest request,
                        HttpServletResponse response) {
-        // TODO: 临时表删除
+        try {
+            // TODO: 临时表删除
 
-        temporaryRepository.removeById(id);
+            TemporaryDO temporaryDO = TemporaryDO.builder()
+                    .id(id)
+                    .isDelete(1)
+                    .build();
+            temporaryRepository.updateById(temporaryDO);
+
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.supersonic.chat.server.persistence.mapper.TemplateMapper">
+
+    <resultMap id="BaseResultMap" type="com.tencent.supersonic.chat.server.persistence.dataobject.TemplateDO">
+            <id property="templateId" column="template_id" jdbcType="INTEGER"/>
+            <result property="templateName" column="template_name" jdbcType="VARCHAR"/>
+            <result property="templateDescription" column="template_description" jdbcType="VARCHAR"/>
+            <result property="templateType" column="template_type" jdbcType="VARCHAR"/>
+            <result property="scopeOfApplication" column="scope_of_application" jdbcType="VARCHAR"/>
+            <result property="agentId" column="agent_id" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="idDelete" column="id_delete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        template_id,template_name,template_description,
+        template_type,scope_of_application,agent_id,
+        create_time,update_time,id_delete
+    </sql>
+</mapper>

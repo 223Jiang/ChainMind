@@ -1,6 +1,7 @@
 package com.tencent.supersonic.chat.server.persistence.repository.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
@@ -30,10 +31,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -191,5 +189,38 @@ public class ChatQueryRepositoryImpl implements ChatQueryRepository {
     @Override
     public List<ChatParseDO> getParseInfoList(List<Long> questionIds) {
         return chatParseMapper.getParseInfoList(questionIds);
+    }
+
+    @Override
+    public List<QueryResp> getChatQueries(List<Long> queryIds) {
+        // 校验输入参数是否为空
+        if (queryIds == null || queryIds.isEmpty()) {
+            // 如果 queryIds 为空，直接返回空列表
+            return Collections.emptyList();
+        }
+
+        try {
+            // 构造查询条件
+            QueryWrapper<ChatQueryDO> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().in(ChatQueryDO::getQuestionId, queryIds);
+
+            // 执行数据库查询
+            List<ChatQueryDO> chatQueryDos = chatQueryDOMapper.selectList(queryWrapper);
+
+            // 如果查询结果为空，直接返回空列表
+            if (chatQueryDos == null || chatQueryDos.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            // 将查询结果转换为目标对象列表
+            return chatQueryDos.stream()
+                    // 调用转换方法
+                    .map(this::convertTo)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            // 捕获异常并记录日志，避免程序崩溃
+            log.error("获取 ID 的聊天查询时出错：{}", queryIds, e);
+            throw new RuntimeException("无法获取聊天查询", e);
+        }
     }
 }
