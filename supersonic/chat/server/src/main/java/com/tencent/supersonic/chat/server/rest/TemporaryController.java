@@ -41,7 +41,7 @@ public class TemporaryController {
      */
     @PostMapping("/excelDataImport")
     public Boolean excelDataImport(@RequestBody ExcelDataImport excelDataImport,
-                                  HttpServletRequest request, HttpServletResponse response) {
+                                   HttpServletRequest request, HttpServletResponse response) {
         try {
             User user = UserHolder.findUser(request, response);
 
@@ -54,8 +54,9 @@ public class TemporaryController {
 
     /**
      * 查询临时表列表
-     * @param temporaryReq  查询数据
-     * @return              临时表数据列表
+     *
+     * @param temporaryReq 查询数据
+     * @return 临时表数据列表
      */
     @PostMapping("/list")
     public Page<TemporaryDO> search(@RequestBody TemporaryReq temporaryReq, HttpServletRequest request,
@@ -72,11 +73,12 @@ public class TemporaryController {
 
     /**
      * 更新临时表
-     * @param temporaryUpdateReq    更新数据
+     *
+     * @param temporaryUpdateReq 更新数据
      */
     @PostMapping("/update")
     public Boolean update(@RequestBody TemporaryUpdateReq temporaryUpdateReq, HttpServletRequest request,
-                                    HttpServletResponse response) {
+                          HttpServletResponse response) {
         try {
             User user = UserHolder.findUser(request, response);
 
@@ -90,15 +92,14 @@ public class TemporaryController {
 
     /**
      * 临时表删除
-     * @param id    临时表id
+     *
+     * @param id 临时表id
      */
     @PostMapping("/delete/{id}")
     public Boolean delete(@PathVariable Long id,
-                       HttpServletRequest request,
-                       HttpServletResponse response) {
+                          HttpServletRequest request,
+                          HttpServletResponse response) {
         try {
-            // TODO: 临时表删除
-
             TemporaryDO temporaryDO = TemporaryDO.builder()
                     .id(id)
                     .isDelete(1)

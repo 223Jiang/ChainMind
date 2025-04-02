@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.rmi.ServerException;
 import java.sql.Connection;
@@ -157,6 +158,7 @@ public class SqlUtils {
      * @param createTableSql 包含创建表语句的字符串
      * @throws ServerException 如果执行过程中发生异常，则抛出ServerException
      */
+    @Transactional(rollbackFor = Exception.class)
     public void executeCreateTable(String createTableSql) throws ServerException {
         // 校验输入是否为空或无效
         if (StringUtils.isBlank(createTableSql)) {
@@ -190,6 +192,13 @@ public class SqlUtils {
         }
     }
 
+    /**
+     * 实现数据批量插入/批量更新
+     *
+     * @param sql                   插入语句
+     * @param batchArgs             插入数据集
+     */
+    @Transactional(rollbackFor = Exception.class)
     public void executeBatchUpdate(String sql, List<Object[]> batchArgs) throws ServerException {
         // 校验输入是否为空或无效
         if (StringUtils.isBlank(sql)) {

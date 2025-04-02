@@ -89,7 +89,7 @@ public class ExcelServiceImpl implements ExcelService {
                 log.info("完善后表名：{}", tableName);
 
                 sql = sql.replace("```sql", "").replace("```", "")
-                         .replace(" " + preTableName + " ", " " + tableName + " ");
+                        .replace(" " + preTableName + " ", " " + tableName + " ");
                 log.info("创建表语句：\n{}", sql);
 
                 sqlExecuteReq.setSql(sql);
@@ -127,7 +127,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Async("asyncTaskExecutor") // 指定线程池
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public CompletableFuture<Void> asyncImportData(Long tableId, String tableName, MultipartFile file,
                                                    SqlExecuteReq sqlExecuteReq, User user) {
 
@@ -150,13 +150,13 @@ public class ExcelServiceImpl implements ExcelService {
 
             // 更新表状态为导入成功
             tempDO.setTableStatus(0);
-            temporaryRepository.save(tempDO);
+            temporaryRepository.saveOrUpdate(tempDO);
 
             return CompletableFuture.completedFuture(null);
         } catch (Exception e) {
             // 更新表状态为导入失败
             tempDO.setTableStatus(3);
-            temporaryRepository.save(tempDO);
+            temporaryRepository.saveOrUpdate(tempDO);
 
             throw new CompletionException(e);
         }
@@ -164,8 +164,9 @@ public class ExcelServiceImpl implements ExcelService {
 
     /**
      * 根据路径获取构建MultipartFile
-     * @param filePath  文件路径
-     * @return          MultipartFile对象
+     *
+     * @param filePath 文件路径
+     * @return MultipartFile对象
      */
     private static MultipartFile getMultipartFile(String filePath) throws IOException {
         // 参数校验
@@ -210,8 +211,8 @@ public class ExcelServiceImpl implements ExcelService {
     /**
      * 插入sql语句
      *
-     * @param tableName   表名
-     * @param excelData   数据列表
+     * @param tableName 表名
+     * @param excelData 数据列表
      */
     private String insertDataIntoTable(String tableName, List<String> excelData) {
         if (excelData.isEmpty()) {
@@ -247,7 +248,7 @@ public class ExcelServiceImpl implements ExcelService {
         }
 
         // 定义正则表达式，匹配 CREATE TABLE 后的表名
-        String regex = "(?i)CREATE\\s+TABLE\\s+(\\w+)";
+        final String regex = "(?i)CREATE\\s+TABLE\\s+(\\w+)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(createTableSql);
 

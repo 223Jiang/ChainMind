@@ -1,9 +1,6 @@
 package com.tencent.supersonic.chat.server.persistence.dataobject;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -21,7 +18,7 @@ public class TemplateDO implements Serializable {
     /**
      * 模版id
      */
-    @TableId(value = "template_id")
+    @TableId(value = "template_id", type = IdType.AUTO)
     private Integer templateId;
 
     /**

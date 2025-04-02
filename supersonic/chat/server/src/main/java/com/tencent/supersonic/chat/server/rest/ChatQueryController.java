@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 /**
- * query controller
+ * 处理聊天接口
  */
 @RestController
 @RequestMapping({"/supersonic/api/chat/query", "/supersonic/openapi/chat/query"})
@@ -34,17 +34,40 @@ public class ChatQueryController {
     @Resource
     private ExcelService excelService;
 
+    /**
+     * 处理搜索请求的接口方法
+     * 用于处理来自客户端的搜索请求，将请求中的数据解析并执行搜索操作
+     *
+     * @param chatParseReq 包含搜索请求数据的对象，由客户端发送的JSON数据转换而来
+     * @param request      HTTP请求对象，用于获取请求头信息等
+     * @param response     HTTP响应对象，用于设置响应头信息等
+     * @return 返回搜索结果，具体结果类型依赖于搜索服务的实现
+     */
     @PostMapping("search")
     public Object search(@RequestBody ChatParseReq chatParseReq, HttpServletRequest request,
                          HttpServletResponse response) {
+        // 在请求中查找用户信息，并设置到搜索请求对象中
         chatParseReq.setUser(UserHolder.findUser(request, response));
+        // 调用搜索服务执行搜索操作，并返回搜索结果
         return chatQueryService.search(chatParseReq);
     }
 
+    /**
+     * 处理解析请求的端点
+     * 该方法负责接收HTTP POST请求，解析聊天请求参数，并调用服务层方法进行处理
+     *
+     * @param chatParseReq 包含聊天解析请求数据的对象，由请求体自动转换而来
+     * @param request      HTTP请求对象，用于获取请求信息
+     * @param response     HTTP响应对象，用于设置响应信息
+     * @return 返回由chatQueryService解析后的结果对象
+     * @throws Exception 如果解析过程中发生错误，抛出异常
+     */
     @PostMapping("parse")
     public Object parse(@RequestBody ChatParseReq chatParseReq, HttpServletRequest request,
                         HttpServletResponse response) throws Exception {
+        // 在请求参数中添加用户信息，该信息通过UserHolder根据请求和响应获取
         chatParseReq.setUser(UserHolder.findUser(request, response));
+        // 调用chatQueryService的parse方法处理聊天解析请求，并返回结果
         return chatQueryService.parse(chatParseReq);
     }
 
@@ -98,6 +121,4 @@ public class ChatQueryController {
         return chatQueryService.queryDimensionValue(dimensionValueReq,
                 UserHolder.findUser(request, response));
     }
-
-
 }

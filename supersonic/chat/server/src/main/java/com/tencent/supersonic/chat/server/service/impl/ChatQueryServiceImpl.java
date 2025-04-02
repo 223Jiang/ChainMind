@@ -83,22 +83,35 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         return chatLayerService.retrieve(queryNLReq);
     }
 
+    /**
+     * 解析方法，用于处理聊天解析请求
+     *
+     * @param chatParseReq 聊天解析请求对象，包含了解析所需的查询信息和用户信息
+     * @return 返回聊天解析响应对象，包含了解析结果
+     */
     @Override
     public ChatParseResp parse(ChatParseReq chatParseReq) {
+        // 获取查询ID，如果为空，则创建新的查询记录
         Long queryId = chatParseReq.getQueryId();
         if (Objects.isNull(queryId)) {
             queryId = chatManageService.createChatQuery(chatParseReq);
         }
 
+        // 构建解析上下文，用于在整个解析过程中传递和存储解析相关的数据
         ParseContext parseContext = buildParseContext(chatParseReq, new ChatParseResp(queryId));
+
+        // 遍历所有查询解析器，对查询进行解析
         chatQueryParsers.forEach(p -> p.parse(parseContext));
+        // 遍历所有解析结果处理器，对解析结果进行处理
         parseResultProcessors.forEach(p -> p.process(parseContext));
 
+        // 如果不需要用户反馈，则将解析结果批量添加到系统，并更新解析耗时
         if (!parseContext.needFeedback()) {
             chatManageService.batchAddParse(chatParseReq, parseContext.getResponse());
             chatManageService.updateParseCostTime(parseContext.getResponse());
         }
 
+        // 返回解析结果
         return parseContext.getResponse();
     }
 

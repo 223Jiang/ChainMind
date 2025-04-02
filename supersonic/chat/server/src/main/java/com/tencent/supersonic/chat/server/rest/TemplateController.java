@@ -6,6 +6,8 @@ import com.tencent.supersonic.chat.server.persistence.repository.TemplateReposit
 import com.tencent.supersonic.chat.server.req.InteractionReq;
 import com.tencent.supersonic.chat.server.req.TemplateReq;
 import com.tencent.supersonic.chat.server.req.TemplateSearchReq;
+import com.tencent.supersonic.chat.server.req.dto.DataExportDTO;
+import com.tencent.supersonic.chat.server.req.vo.InteractionVO;
 import com.tencent.supersonic.chat.server.req.vo.TemplateSearchVO;
 import com.tencent.supersonic.common.pojo.User;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +36,8 @@ public class TemplateController {
     /**
      * 模版查询
      *
-     * @param templateSearchReq  模版
-     * @return                   模板列表集
+     * @param templateSearchReq 模版
+     * @return 模板列表集
      */
     @PostMapping("/search")
     public IPage<TemplateSearchVO> search(@RequestBody TemplateSearchReq templateSearchReq,
@@ -52,12 +54,12 @@ public class TemplateController {
     /**
      * 模版创建
      *
-     * @param templateReq  模版
-     * @return          true成功，false失败
+     * @param templateReq 模版
+     * @return true成功，false失败
      */
     @PostMapping("/create")
     public Boolean create(@RequestBody TemplateReq templateReq,
-                                  HttpServletRequest request, HttpServletResponse response) {
+                          HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
 
         try {
@@ -71,12 +73,12 @@ public class TemplateController {
     /**
      * 模版修改
      *
-     * @param templateReq  模版（注意传模版id）
-     * @return          true成功，false失败
+     * @param templateReq 模版（注意传模版id）
+     * @return true成功，false失败
      */
     @PostMapping("/update")
     public Boolean updateTemplate(@RequestBody TemplateReq templateReq,
-                          HttpServletRequest request, HttpServletResponse response) {
+                                  HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
 
         try {
@@ -90,9 +92,9 @@ public class TemplateController {
     /**
      * 模版删除
      *
-     * @param id        模版id
-     * @param chatId    对话id
-     * @return          true成功，false失败
+     * @param id     模版id
+     * @param chatId 对话id
+     * @return true成功，false失败
      */
     @PostMapping("/delete/{id}/{chatId}")
     public Boolean deleteTemplate(@PathVariable Integer id,
@@ -111,17 +113,50 @@ public class TemplateController {
     /**
      * 模版问答
      *
-     * @param interactionReq        模版问答请求数据
-     * @return                      true成功，false失败
+     * @param interactionReq 模版问答请求数据
+     * @return true成功，false失败
      */
     @PostMapping("/interaction")
-    public Boolean interaction(@RequestBody InteractionReq interactionReq,
-                               HttpServletRequest request, HttpServletResponse response) {
+    public InteractionVO interaction(@RequestBody InteractionReq interactionReq,
+                                     HttpServletRequest request, HttpServletResponse response) {
         User user = UserHolder.findUser(request, response);
 
         try {
-            templateRepository.interaction(interactionReq, user);
-            return true;
+            return templateRepository.interaction(interactionReq, user);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    /**
+     * 问答数据导出为PDF
+     *
+     * @param dto 问答数据导出为请求实体
+     */
+    @PostMapping("/pdfExport")
+    public void pdfExport(@RequestBody DataExportDTO dto,
+                          HttpServletRequest request, HttpServletResponse response) {
+        User user = UserHolder.findUser(request, response);
+
+        try {
+            templateRepository.pdfExport(response, dto);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    /**
+     * 问答数据导出为MD
+     *
+     * @param dto 问答数据导出为请求实体
+     */
+    @PostMapping("/mdExport")
+    public void mdExport(@RequestBody DataExportDTO dto,
+                         HttpServletRequest request, HttpServletResponse response) {
+        User user = UserHolder.findUser(request, response);
+
+        try {
+            templateRepository.mdExport(response, dto);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
