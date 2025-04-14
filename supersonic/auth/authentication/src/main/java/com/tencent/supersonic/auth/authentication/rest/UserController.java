@@ -35,7 +35,7 @@ public class UserController {
 
     @GetMapping("/getCurrentUser")
     public User getCurrentUser(HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse) {
+                               HttpServletResponse httpServletResponse) {
         return userService.getCurrentUser(httpServletRequest, httpServletResponse);
     }
 
@@ -76,7 +76,7 @@ public class UserController {
 
     @PostMapping("/generateToken")
     public UserToken generateToken(@RequestBody UserTokenReq userTokenReq,
-            HttpServletRequest request, HttpServletResponse response) {
+                                   HttpServletRequest request, HttpServletResponse response) {
         User user = userService.getCurrentUser(request, response);
         return userService.generateToken(userTokenReq.getName(), user.getName(),
                 userTokenReq.getExpireTime());
@@ -102,5 +102,15 @@ public class UserController {
     @PostMapping("/deleteUserToken")
     public void deleteUserToken(@RequestParam(name = "tokenId") Long tokenId) {
         userService.deleteUserToken(tokenId);
+    }
+
+    /**
+     * 用户删除
+     *
+     * @param correlationId 用户关联id
+     */
+    @PostMapping("/deleteUser/{correlationId}")
+    public void deleteUser(@PathVariable String correlationId) {
+        userService.deleteTheUser(correlationId);
     }
 }

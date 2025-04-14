@@ -228,7 +228,7 @@ public class TemplateRepositoryImpl extends ServiceImpl<TemplateMapper, Template
         }
 
         // 修改时，模版方法不能修改
-        templateReq.getTemplateDTO().setAgentId(null);
+//        templateReq.getTemplateDTO().setAgentId(null);
 
         TemplateDO templateDO = new TemplateDO();
 
@@ -246,10 +246,15 @@ public class TemplateRepositoryImpl extends ServiceImpl<TemplateMapper, Template
             throw new RuntimeException("修改 TemplateDO 失败", e);
         }
 
+        // 将其子模版数据删除
+        LambdaQueryWrapper<TemplateIssuesDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TemplateIssuesDO::getTemplateId, templateDO.getTemplateId());
+        templateIssuesRepository.remove(wrapper);
+
         List<TemplateIssuesDO> templateIssuesDTOS = getTemplateIssuesDos(templateReq, templateDO);
 
         try {
-            templateIssuesRepository.saveOrUpdateBatch(templateIssuesDTOS);
+            templateIssuesRepository.saveBatch(templateIssuesDTOS);
         } catch (Exception e) {
             log.error("无法批量修改 TemplateIssuesDO", e);
             throw new RuntimeException("批量修改 TemplateIssuesDO 失败", e);
@@ -268,6 +273,7 @@ public class TemplateRepositoryImpl extends ServiceImpl<TemplateMapper, Template
                 try {
                     BeanUtil.copyProperties(templateIssuesDTO, templateIssuesDO);
                     templateIssuesDO.setTemplateId(templateId);
+                    templateIssuesDO.setIssuesId(null);
                 } catch (Exception e) {
                     log.error("无法将属性从 TemplateIssuesDTO 复制到 TemplateIssuesDO", e);
                     throw new RuntimeException("属性复制失败", e);

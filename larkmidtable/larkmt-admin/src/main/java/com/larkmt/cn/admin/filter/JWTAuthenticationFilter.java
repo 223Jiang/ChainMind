@@ -2,14 +2,11 @@ package com.larkmt.cn.admin.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.larkmt.cn.admin.util.AESSupersonicUtil;
 import com.larkmt.core.biz.model.ReturnT;
 import com.larkmt.cn.admin.core.util.I18nUtil;
 import com.larkmt.cn.admin.entity.JwtUser;
 import com.larkmt.cn.admin.entity.LoginUser;
 import com.larkmt.cn.admin.util.JwtTokenUtils;
-import com.tencent.supersonic.auth.api.authentication.request.UserReq;
-import com.tencent.supersonic.auth.api.authentication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -65,7 +62,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             );
         } catch (IOException e) {
             // 处理输入输出异常
-            logger.error("attemptAuthentication error :{}",e);
+            logger.error("attemptAuthentication error :{}", e);
             return null;
         } catch (Exception e) {
             // 处理其他异常
@@ -86,11 +83,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String role = "";
         Collection<? extends GrantedAuthority> authorities = jwtUser.getAuthorities();
-        for (GrantedAuthority authority : authorities){
+        for (GrantedAuthority authority : authorities) {
             role = authority.getAuthority();
         }
 
-        String token = JwtTokenUtils.createToken(jwtUser.getId(),jwtUser.getUsername(), role, isRemember);
+        String token = JwtTokenUtils.createToken(jwtUser.getId(), jwtUser.getUsername(), role, isRemember);
         response.setHeader("token", JwtTokenUtils.TOKEN_PREFIX + token);
         response.setCharacterEncoding("UTF-8");
         Map<String, Object> maps = new HashMap<>();

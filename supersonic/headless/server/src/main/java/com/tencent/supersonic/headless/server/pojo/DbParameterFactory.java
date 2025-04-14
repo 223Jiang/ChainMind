@@ -7,8 +7,8 @@ import java.util.Map;
 
 /**
  * @author WeiWei
- *
- *         数据库参数工厂类 用于根据不同的数据库引擎类型获取相应的参数构建器
+ * <p>
+ * 数据库参数工厂类 用于根据不同的数据库引擎类型获取相应的参数构建器
  */
 public class DbParameterFactory {
 
@@ -30,7 +30,7 @@ public class DbParameterFactory {
 
     /**
      * 根据数据库引擎类型获取对应的参数构建器
-     * 
+     *
      * @param engineType 数据库引擎类型
      * @return 对应引擎类型的参数构建器，如果不存在则返回null
      */
@@ -40,7 +40,7 @@ public class DbParameterFactory {
 
     /**
      * 获取所有参数构建器的映射
-     * 
+     *
      * @return 包含所有参数构建器的映射
      */
     public static Map<String, DbParametersBuilder> getMap() {

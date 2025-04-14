@@ -25,73 +25,99 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/** sql parse utils */
+/**
+ * SQL 解析工具
+ */
 public class SqlParseUtils {
 
     /**
-     * get sql parseInfo
+     * 获取 SQL parseInfo
      *
-     * @param sql
-     * @return
+     * @param SQL SQL 语句进行解析
+     * @return 返回 SQL 语句的解析信息
+     * @throws RuntimeException，如果解析失败，则抛出运行时异常
      */
     public static SqlParserInfo getSqlParseInfo(String sql) {
         try {
+            // 创建 SQL 解析器
             SqlParser parser = SqlParser.create(sql);
+            // 将 SQL 语句解析为抽象语法树
             SqlNode sqlNode = parser.parseQuery();
+            // 初始化 SQL 解析信息对象
             SqlParserInfo sqlParserInfo = new SqlParserInfo();
 
+            // 递归处理 SQL 节点以提取解析信息
             handlerSQL(sqlNode, sqlParserInfo);
 
+            // 删除所有字段中的重复字段
             sqlParserInfo.setAllFields(
                     sqlParserInfo.getAllFields().stream().distinct().collect(Collectors.toList()));
 
+            // 删除选择字段中的重复字段
             sqlParserInfo.setSelectFields(sqlParserInfo.getSelectFields().stream().distinct()
                     .collect(Collectors.toList()));
 
+            // 返回 SQL 解析信息对象
             return sqlParserInfo;
         } catch (SqlParseException e) {
+            // 如果解析失败，则引发运行时异常
             throw new RuntimeException("getSqlParseInfo", e);
         }
     }
 
     /**
-     * hanlder sql
+     * 处理SQL语句
+     * <p>
+     * 该方法根据SQL节点的类型调用相应的处理方法它通过解析SQL节点的种类来决定执行哪种类型的SQL处理函数
+     * 主要目的是对传入的SQL语句进行分类处理，目前只处理SELECT和ORDER BY两种类型
      *
-     * @param sqlNode
-     * @param sqlParserInfo
+     * @param sqlNode       SQL节点对象，包含了SQL语句的结构化信息
+     * @param sqlParserInfo SQL解析信息对象，用于存储和传递SQL解析过程中的相关信息
      */
     public static void handlerSQL(SqlNode sqlNode, SqlParserInfo sqlParserInfo) {
+        // 获取SQL节点的类型
         SqlKind kind = sqlNode.getKind();
 
+        // 根据SQL类型执行相应的处理逻辑
         switch (kind) {
             case SELECT:
+                // 当SQL类型为SELECT时，调用处理SELECT语句的方法
                 handlerSelect(sqlNode, sqlParserInfo);
                 break;
             case ORDER_BY:
+                // 当SQL类型为ORDER BY时，调用处理ORDER BY语句的方法
                 handlerOrderBy(sqlNode, sqlParserInfo);
                 break;
             default:
+                // 对于其他SQL类型，目前不进行处理
                 break;
         }
     }
 
     /**
-     * hanlder order by
+     * 处理 SQL 语句中的 order by 子句。
+     * 该方法负责对 order by 子句进行解析和处理，以提取排序字段并更新相关的 SQL 解析信息。
      *
-     * @param node
-     * @param sqlParserInfo
+     * @param node          表示 order by 子句的 SqlNode，用于访问和处理 order by 信息。
+     * @param sqlParserInfo 包含从 SQL 语句解析的所有信息的 SqlParserInfo 对象，用于存储提取的字段信息。
      */
     private static void handlerOrderBy(SqlNode node, SqlParserInfo sqlParserInfo) {
+        // 将输入节点转换为 SqlOrderBy 类型，以处理特定的 order by作。
         SqlOrderBy sqlOrderBy = (SqlOrderBy) node;
 
+        // 提取 order by 子句之前的查询部分以进行进一步处理。
         SqlNode query = sqlOrderBy.query;
 
+        // 以递归方式处理 SQL 查询部分，以确保 SQL 的所有部分都得到完全解析。
         handlerSQL(query, sqlParserInfo);
 
+        // 从 order by 子句中提取排序列表。
         SqlNodeList orderList = sqlOrderBy.orderList;
 
+        // 解析 orderList 以获取排序中涉及的所有字段名称。
         Set<String> orderFields = handlerField(orderList);
 
+        // 使用提取的排序字段更新 SqlParserInfo 对象，以维护与 SQL 语句相关的所有字段信息。
         sqlParserInfo.getAllFields().addAll(orderFields);
     }
 
@@ -231,7 +257,7 @@ public class SqlParseUtils {
                     String simple = sqlIdentifier.getSimple();
                     SqlBasicCall aliasedNode =
                             new SqlBasicCall(SqlStdOperatorTable.AS,
-                                    new SqlNode[] {sqlBasicCall, new SqlIdentifier(
+                                    new SqlNode[]{sqlBasicCall, new SqlIdentifier(
                                             simple.toLowerCase(), SqlParserPos.ZERO)},
                                     SqlParserPos.ZERO);
                     selectList.set(selectList.indexOf(node), aliasedNode);

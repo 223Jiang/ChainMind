@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import cn.hutool.core.util.IdUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.larkmt.cn.admin.entity.JobUser;
 import com.larkmt.cn.admin.service.JobUserService;
 import com.larkmt.cn.admin.util.AESSupersonicUtil;
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCurrentUser(HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse) {
+                               HttpServletResponse httpServletResponse) {
         User user = UserHolder.findUser(httpServletRequest, httpServletResponse);
         if (user != null) {
             SystemConfig systemConfig = sysParameterService.getSystemConfig();
@@ -172,7 +173,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @GlobalTransactional(rollbackFor = Exception.class)
     public int deleteTheUser(String correlationId) {
+        // -----远程larkmidtabled用户删除
+        LambdaQueryWrapper<JobUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(JobUser::getCorrelationId, correlationId);
+        jobUserService.remove(wrapper);
+        // -----远程larkmidtabled用户删除
+
         return ComponentFactory.getUserAdaptor().deleteTheUser(correlationId);
     }
 }
